@@ -103,6 +103,22 @@ const dependencies = {
       type: 'getApkgExportData',
       args: [state, project, mediaIdToClipsIds],
     }),
+  getSingleClipExportData: (
+    state: AppState,
+    mediaFileId: MediaFileId,
+    clipId: ClipId
+  ) =>
+    sendToMainProcess({
+      type: 'getSingleClipExportData',
+      args: [state, mediaFileId, clipId],
+    }),
+  writeClipAudio: flatten(
+    (clipSpecs: ClipSpecs, outputFilePath: string) =>
+      sendToMainProcess({
+        type: 'writeClipAudio',
+        args: [clipSpecs, outputFilePath],
+      })
+  ),
   processNoteMedia: flatten(
     (clipSpecs: ClipSpecs, destinationFolder: string, saveImages?: string) =>
       sendToMainProcess({

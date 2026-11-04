@@ -6,6 +6,7 @@ import A from '../types/ActionType'
 import { KEYS } from '../utils/keyboard'
 import { getMetaOrCtrlKey } from '../components/FlashcardSectionDisplayClozeField'
 import { isTextFieldFocused } from '../utils/isTextFieldFocused'
+import { adjustClipBoundary } from '../utils/clipBoundary'
 
 const keydownEpic: AppEpic = (action$, state$, effects) =>
   fromEvent<KeyboardEvent>(window, 'keydown').pipe(
@@ -91,6 +92,41 @@ const keydownEpic: AppEpic = (action$, state$, effects) =>
         if (!highlightedClipId) return EMPTY
         event.preventDefault()
         return of(r.mergeOverlappingClips(highlightedClipId))
+      }
+
+      // Shift + Left/Right resizes the selected clip.
+      if (
+        event.shiftKey &&
+        (key === KEYS.arrowLeft || key === KEYS.arrowRight) &&
+        !isTextFieldFocused()
+      ) {
+        const highlightedClipId = r.getHighlightedClipId(state$.value)
+        if (!highlightedClipId) return EMPTY
+
+        event.preventDefault()
+
+        const clip = r.getClip(state$.value, highlightedClipId)
+        if (!clip) return EMPTY
+
+        // Alt (or Ctrl) moves the start of the clip instead of its end.
+        const boundary = event.altKey || ctrlKey ? 'start' : 'end'
+        const direction = key === KEYS.arrowRight ? 1 : -1
+
+        const media = r.getCurrentMediaFile(state$.value)
+        const mediaDurationMs = media?.durationSeconds
+          ? Math.round(media.durationSeconds * 1000)
+          : undefined
+
+        const { start, end } = adjustClipBoundary({
+          clip,
+          boundary,
+          direction,
+          mediaDurationMs,
+        })
+
+        if (start === clip.start && end === clip.end) return EMPTY
+
+        return of(r.resizeClip(highlightedClipId, start, end))
       }
 
       return EMPTY

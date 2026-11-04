@@ -112,6 +112,9 @@ const Media = ({
     onKeyDown: (e) => {
       if (e.key === KEYS.arrowLeft || e.key === KEYS.arrowRight) {
         if (e.altKey) e.preventDefault()
+        // Shift + arrow is used to resize the selected clip, so it needs to
+        // reach the window's keydown handler.
+        else if (e.shiftKey) e.preventDefault()
         else e.stopPropagation()
       }
     },

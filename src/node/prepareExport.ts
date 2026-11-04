@@ -100,6 +100,123 @@ export const TEMPLATE_CSS = `.card {
 }
 `
 
+/**
+ * Builds the export specs for a single clip.
+ *
+ * The clip's end time is extended by the configured tail padding so that the
+ * tail of a sound isn't cut off. It never extends past the end of the media
+ * file.
+ */
+export const getClipSpec = (
+  state: AppState,
+  media: MediaFile,
+  filePath: string,
+  id: ClipId,
+  tailPadding: number
+): ClipSpecs => {
+  const clip = r.getClip(state, id)
+  const flashcard = r.getFlashcard(state, id)
+  if (!clip) throw new Error('Could not find clip ' + id)
+  if (!flashcard) throw new Error('Could not find flashcard ' + id)
+
+  const extension = extname(filePath)
+  const filenameWithoutExtension = basename(filePath, extension)
+
+  const startTime = clip.start
+  // The clip's own end time, used to name the output file. Keeping this
+  // based on the clip itself (rather than the padded end time) means that
+  // changing the tail padding doesn't rename existing media files.
+  const clipEndTime = clip.end
+
+  // Extend the end of the audio so that the tail of the sound isn't cut
+  // off. Never extend past the end of the media file.
+  const mediaEndTime = media.durationSeconds
+    ? Math.round(media.durationSeconds * 1000)
+    : Infinity
+  const endTime = Math.min(clipEndTime + tailPadding, mediaEndTime)
+
+  const outputFilename =
+    sanitizeFileName(
+      `${filenameWithoutExtension.slice(0, 20)}__${media.id}`
+    ) +
+    `__${toTimestamp(startTime, '!', '!')}_${toTimestamp(clipEndTime, '!', '!')}.mp3`
+
+  const getSeconds = (seconds?: number) =>
+    typeof seconds === 'number'
+      ? seconds
+      : +(getMidpoint(startTime, clipEndTime) / 1000).toFixed(3)
+
+  return {
+    sourceFilePath: filePath,
+    startTime,
+    endTime,
+    outputFilename,
+    flashcardSpecs: {
+      id: clip.id,
+      fields: [
+        ...Object.values(flashcard.fields).map(roughEscape),
+        `[sound:${outputFilename}]`,
+        flashcard.image
+          ? `<img src="${basename(
+              getVideoStillPngPath(
+                flashcard.image.id,
+                filePath,
+                getSeconds(flashcard.image.seconds)
+              )
+            )}" />`
+          : '',
+      ],
+      tags: flashcard.tags.map((t) => t.replace(/\s+/g, '_')).join(' '),
+      image: flashcard.image
+        ? {
+            id: flashcard.image.id,
+            seconds: getSeconds(flashcard.image.seconds),
+          }
+        : null,
+
+      clozeDeletions: flashcard.cloze.length
+        ? roughEscape(
+            encodeClozeDeletions(
+              flashcard.fields.transcription,
+              flashcard.cloze
+            )
+          )
+        : undefined,
+    },
+  }
+}
+
+/**
+ * Returns the export specs for a single clip, for exporting it as an mp3 file.
+ *
+ * Unlike `getApkgExportData`, this doesn't need a project, and it doesn't
+ * build any of the Anki deck structures.
+ */
+export const getSingleClipExportData = (
+  state: AppState,
+  mediaFileId: MediaFileId,
+  clipId: ClipId
+):
+  | { type: 'SUCCESS'; clipSpec: ClipSpecs }
+  | { type: 'MISSING MEDIA FILE'; mediaFile: MediaFile | null } => {
+  const media = r.getFile<MediaFile>(state, 'MediaFile', mediaFileId)
+  if (!media) return { type: 'MISSING MEDIA FILE', mediaFile: null }
+
+  const fileLoaded = getFileAvailability(state, media)
+  if (!fileLoaded.filePath || !existsSync(fileLoaded.filePath))
+    return { type: 'MISSING MEDIA FILE', mediaFile: media }
+
+  const clipSpec = getClipSpec(
+    state,
+    media,
+    fileLoaded.filePath,
+    clipId,
+    getClipTailPadding(state)
+  )
+
+  return { type: 'SUCCESS', clipSpec }
+}
+
 /** Returns either valid export data or a list of missing media files. */
 export const getApkgExportData = async (
   state: AppState,
@@ -140,80 +257,9 @@ export const getApkgExportData = async (
     for (const id of clipIds) {
       if (!id) continue
 
-      const clip = r.getClip(state, id)
-      const flashcard = r.getFlashcard(state, id)
-      if (!clip) throw new Error('Could not find clip ' + id)
-      if (!flashcard) throw new Error('Could not find flashcard ' + id)
-
-      const extension = extname(fileLoaded.filePath)
-      const filenameWithoutExtension = basename(fileLoaded.filePath, extension)
-
-      const startTime = clip.start
-      // The clip's own end time, used to name the output file. Keeping this
-      // based on the clip itself (rather than the padded end time) means that
-      // changing the tail padding doesn't rename existing media files.
-      const clipEndTime = clip.end
-
-      // Extend the end of the audio so that the tail of the sound isn't cut
-      // off. Never extend past the end of the media file.
-      const mediaEndTime = media.durationSeconds
-        ? Math.round(media.durationSeconds * 1000)
-        : Infinity
-      const endTime = Math.min(clipEndTime + tailPadding, mediaEndTime)
-
-      const outputFilename =
-        sanitizeFileName(
-          `${filenameWithoutExtension.slice(0, 20)}__${media.id}`
-        ) +
-        `__${toTimestamp(startTime, '!', '!')}_${toTimestamp(
-          clipEndTime,
-          '!',
-          '!'
-        )}.mp3`
-
-      const getSeconds = (seconds?: number) =>
-        typeof seconds === 'number'
-          ? seconds
-          : +(getMidpoint(startTime, clipEndTime) / 1000).toFixed(3)
-
-      clipSpecs.push({
-        sourceFilePath: fileLoaded.filePath,
-        startTime,
-        endTime,
-        outputFilename,
-        flashcardSpecs: {
-          id: clip.id,
-          fields: [
-            ...Object.values(flashcard.fields).map(roughEscape),
-            `[sound:${outputFilename}]`,
-            flashcard.image
-              ? `<img src="${basename(
-                  getVideoStillPngPath(
-                    flashcard.image.id,
-                    fileLoaded.filePath,
-                    getSeconds(flashcard.image.seconds)
-                  )
-                )}" />`
-              : '',
-          ],
-          tags: flashcard.tags.map((t) => t.replace(/\s+/g, '_')).join(' '),
-          image: flashcard.image
-            ? {
-                id: flashcard.image.id,
-                seconds: getSeconds(flashcard.image.seconds),
-              }
-            : null,
-
-          clozeDeletions: flashcard.cloze.length
-            ? roughEscape(
-                encodeClozeDeletions(
-                  flashcard.fields.transcription,
-                  flashcard.cloze
-                )
-              )
-            : undefined,
-        },
-      })
+      clipSpecs.push(
+        getClipSpec(state, media, fileLoaded.filePath, id, tailPadding)
+      )
     }
   }
 

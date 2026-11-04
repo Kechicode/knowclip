@@ -5,7 +5,6 @@ import { DEFAULT_CLIP_TAIL_PADDING_MS } from '../utils/clipTailPadding'
 export const initialState: SettingsState = {
   mediaFolderLocation: null,
   assetsDirectories: [],
-  checkForUpdatesAutomatically: true,
   warnBeforeConvertingMedia: true,
   viewMode: 'VERTICAL',
   clipTailPaddingMs: DEFAULT_CLIP_TAIL_PADDING_MS,
@@ -36,12 +35,6 @@ const settings: Reducer<SettingsState, Action> = (
         assetsDirectories: state.assetsDirectories.filter(
           (path) => !action.directoryPaths.includes(path)
         ),
-      }
-
-    case A.setCheckForUpdatesAutomatically:
-      return {
-        ...state,
-        checkForUpdatesAutomatically: action.check,
       }
 
     case A.overrideSettings:

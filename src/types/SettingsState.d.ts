@@ -5,7 +5,6 @@
 declare type SettingsState = {
   mediaFolderLocation: string | null
   assetsDirectories: string[]
-  checkForUpdatesAutomatically: boolean
   warnBeforeConvertingMedia: boolean
   viewMode: ViewMode
   /**

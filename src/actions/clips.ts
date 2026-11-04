@@ -44,6 +44,18 @@ export const clipsActions = {
     startEditing,
   }),
 
+  /**
+   * Resize a clip by moving one of its boundaries.
+   *
+   * Used by the keyboard shortcuts for adjusting the selected card's range.
+   */
+  resizeClip: (id: ClipId, start: number, end: number) => ({
+    type: A.resizeClip,
+    id,
+    start,
+    end,
+  }),
+
   addClips: (
     clips: Array<Clip>,
     flashcards: Array<Flashcard>,

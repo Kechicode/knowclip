@@ -15,7 +15,7 @@ import moment from 'moment'
 import { getPersistedDataSnapshot } from './test/getPersistedDataSnapshot'
 import { getMediaMetadata, readMediaFile } from './node/ffmpeg'
 import { getVideoStill } from './node/getVideoStill'
-import { getApkgExportData } from './node/prepareExport'
+import { getApkgExportData, getSingleClipExportData } from './node/prepareExport'
 import { temporaryDirectory, temporaryFile } from 'tempy'
 import {
   getSubtitlesFilePath,
@@ -28,6 +28,7 @@ import { getWaveformPng, getWaveformPngs } from './node/getWaveform'
 import { readdir } from 'fs-extra'
 import { parseProjectJson } from './node/parseProject'
 import { getWriteApkgDeck } from './node/writeToApkg'
+import { writeClipAudio } from './node/writeClipAudio'
 
 export type MessageResponders = ReturnType<typeof getMessageResponders>
 
@@ -91,8 +92,13 @@ export const getMessageResponders = (
         ...(showHiddenFiles ? (['showHiddenFiles'] as const) : []),
       ],
     }),
-  showSaveDialog: (name: string, extensions: Array<string>) =>
+  showSaveDialog: (
+    name: string,
+    extensions: Array<string>,
+    defaultPath?: string
+  ) =>
     dialog.showSaveDialog({
+      ...(defaultPath ? { defaultPath } : {}),
       filters: [{ name, extensions }],
     }),
   showMessageBox: (
@@ -188,6 +194,8 @@ export const getMessageResponders = (
   getMediaMetadata,
   getVideoStill,
   getApkgExportData,
+  getSingleClipExportData,
+  writeClipAudio,
   writeApkgDeck: getWriteApkgDeck(mainWindow),
   getSubtitlesFilePath,
   getSubtitlesFromFile,

@@ -19,7 +19,8 @@ const ipcResult = <T>(messageResponse: MessageResponse<T>) => {
 
 const showSaveDialog = (
   name: string,
-  extensions: Array<string>
+  extensions: Array<string>,
+  defaultPath?: string
 ): Promise<string | null | undefined> =>
   new Promise(async (res, rej) => {
     pauseMedia()
@@ -27,7 +28,7 @@ const showSaveDialog = (
     try {
       const saveDialog = await window.electronApi.sendToMainProcess({
         type: 'showSaveDialog',
-        args: [name, extensions],
+        args: [name, extensions, defaultPath],
       })
       const { filePath } = ipcResult(saveDialog)
 

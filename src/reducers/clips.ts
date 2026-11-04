@@ -152,6 +152,25 @@ const clips: Reducer<ClipsState, Action> = (state = initialState, action) => {
       }
     }
 
+    case A.resizeClip: {
+      const { id, start, end } = action
+      const existingClip = state.byId[id]
+      if (!existingClip) return state
+      // Resizing a clip doesn't merge it with the clips it overlaps. Overlapping
+      // clips are allowed, and can be merged explicitly with the merge action.
+      return {
+        ...state,
+        byId: {
+          ...state.byId,
+          [id]: {
+            ...existingClip,
+            start,
+            end,
+          },
+        },
+      }
+    }
+
     case A.editClip: {
       const { id, override, flashcardOverride } = action
       return editClip(state, id, override, flashcardOverride)

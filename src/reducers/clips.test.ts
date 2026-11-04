@@ -336,4 +336,29 @@ describe('clips reducer', () => {
     expect(newState.byId.b.start).toBe(2)
     expect(newState.byId.b.end).toBe(2.5)
   })
+
+  it('resizes a clip without merging it with the clips it overlaps', () => {
+    const state = clips(
+      {
+        byId: { a: a.clip, b: b.clip },
+        flashcards: { a: a.card, b: b.card },
+        idsByMediaFileId: { [fileId]: ['a', 'b'] },
+      },
+      { type: A.initializeApp }
+    )
+
+    // Resizing "a" so that it covers "b" keeps both clips around.
+    const newState = clips(state, r.resizeClip('a', 1, 2.5))
+
+    expect(Object.keys(newState.byId).sort()).toEqual(['a', 'b'])
+    expect(newState.byId.a.start).toBe(1)
+    expect(newState.byId.a.end).toBe(2.5)
+    expect(newState.byId.b.start).toBe(2)
+    expect(newState.byId.b.end).toBe(2.5)
+  })
+
+  it('ignores a resize of a clip that does not exist', () => {
+    const newState = clips(oldState, r.resizeClip('nope', 0, 1))
+    expect(newState.byId).toEqual(oldState.byId)
+  })
 })

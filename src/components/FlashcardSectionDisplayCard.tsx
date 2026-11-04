@@ -139,7 +139,7 @@ const FlashcardSectionDisplayCard = memo(
                 <Edit />
               </IconButton>
             </Tooltip>
-            <Tooltip title="Export this card as an Anki deck file">
+            <Tooltip title="Export this card's audio as an mp3 file">
               <IconButton
                 className={css.editCardButton}
                 onClick={exportSingleCard}

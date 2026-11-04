@@ -100,6 +100,7 @@ const UNDOABLE_ACTIONS = new Set<KnowclipActionType>([
   A.mergeClips,
   A.moveClip,
   A.stretchClip,
+  A.resizeClip,
 ])
 
 const HISTORY_CLEARING_ACTIONS = new Set<KnowclipActionType>([

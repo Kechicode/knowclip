@@ -17,11 +17,6 @@ export const settingsActions = {
     directoryPaths,
   }),
 
-  setCheckForUpdatesAutomatically: (check: boolean) => ({
-    type: A.setCheckForUpdatesAutomatically,
-    check,
-  }),
-
   overrideSettings: (settings: Partial<SettingsState>) => ({
     type: A.overrideSettings,
     settings,

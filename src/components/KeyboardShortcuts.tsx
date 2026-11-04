@@ -11,6 +11,10 @@ const getKeyboardShortcuts = (platform: Window['electronApi']['platform']) =>
     'Select next': '→',
     'Select previous (while editing)': 'Alt + ←',
     'Select next (while editing)': 'Alt + →',
+    'Shorten selected card': 'Shift + ←',
+    'Lengthen selected card': 'Shift + →',
+    'Move start of selected card earlier': 'Shift + Alt + ←',
+    'Move start of selected card later': 'Shift + Alt + →',
     'Look up word at mouse cursor': 'D',
     'Close dictionary popover': 'Esc',
     'Start editing fields': 'E',
@@ -72,6 +76,10 @@ const KeyboardShortcuts = () => {
               <Shortcut action="Select next" />
               <Shortcut action="Select previous (while editing)" />
               <Shortcut action="Select next (while editing)" />
+              <Shortcut action="Shorten selected card" />
+              <Shortcut action="Lengthen selected card" />
+              <Shortcut action="Move start of selected card earlier" />
+              <Shortcut action="Move start of selected card later" />
             </section>
 
             <section className={css.group}>

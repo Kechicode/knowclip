@@ -38,6 +38,10 @@ export function useWaveformEventHandlers({
   useEffect(() => {
     const handleKeydown = (event: KeyboardEvent) => {
       const { altKey, key } = event
+      // Shift + arrow is used to resize the selected clip, so it shouldn't
+      // also change the selection.
+      if (event.shiftKey) return
+
       if (key === KEYS.arrowRight && (altKey || !isTextFieldFocused())) {
         return waveform.actions.selectNextItemAndSeek(
           playerRef.current,

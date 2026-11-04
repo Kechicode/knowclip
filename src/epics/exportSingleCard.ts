@@ -1,51 +1,83 @@
 import { mergeMap, switchMap, catchError } from 'rxjs/operators'
 import { ofType } from 'redux-observable'
-import { of } from 'rxjs'
+import { of, EMPTY } from 'rxjs'
 import r from '../redux'
 import A from '../types/ActionType'
-import { makeApkg } from './exportApkg'
+import { getSingleCardAudioFileName } from '../utils/singleCardAudioFilename'
 
 /**
- * Export a single flashcard as an .apkg file containing only that card.
+ * Export a single flashcard's audio as an mp3 file.
  *
- * This reuses the same export pipeline as the full deck export, but builds
- * the export data for one clip only.
+ * The user picks where to save the file. The audio is clipped from the media
+ * file the card came from, with the configured tail padding applied so that
+ * the end of the sound isn't cut off.
  */
 const exportSingleCard: AppEpic = (action$, state$, effects) =>
   action$.pipe(
     ofType(A.exportSingleCardRequest as const),
     mergeMap(async ({ mediaFileId, clipId }) => {
-      const currentProject = r.getCurrentProject(state$.value)
-      if (!currentProject)
-        return of(r.exportApkgFailure('Could not find project'))
-
-      const exportResult = await effects.getApkgExportData(
+      const exportResult = await effects.getSingleClipExportData(
         state$.value,
-        currentProject,
-        { [mediaFileId]: [clipId] }
+        mediaFileId,
+        clipId
       )
 
       if (exportResult.error) {
         return of(r.exportApkgFailure(`${exportResult.error.message}`))
       }
 
-      if (exportResult.value.type === 'MISSING MEDIA FILES') {
-        const missing = exportResult.value.missingMediaFiles[0]
+      if (exportResult.value.type === 'MISSING MEDIA FILE') {
+        const missing = exportResult.value.mediaFile
         return of(
           r.exportApkgFailure(
-            `Could not find the media file for this card: ${missing?.name}. ` +
-              `Please locate it before exporting.`
+            `Could not find the media file for this card${
+              missing ? ` (${missing.name})` : ''
+            }. Please locate it before exporting.`
           )
         )
       }
 
-      // Make it clear that this deck only contains a single card.
-      const apkgData: ApkgExportData = {
-        ...exportResult.value.apkgData,
-        deckName: `${exportResult.value.apkgData.deckName} (single card)`,
+      const { clipSpec } = exportResult.value
+
+      const clip = r.getClip(state$.value, clipId)
+      const flashcard = r.getFlashcard(state$.value, clipId)
+      const media = r.getFile<MediaFile>(
+        state$.value,
+        'MediaFile',
+        mediaFileId
+      )
+
+      const defaultFileName = getSingleCardAudioFileName({
+        transcription: flashcard?.fields.transcription,
+        mediaName: media?.name,
+        start: clip?.start ?? 0,
+        end: clip?.end ?? 0,
+      })
+
+      const outputFilePath = await effects.showSaveDialog(
+        'MP3 audio file',
+        ['mp3'],
+        defaultFileName
+      )
+      if (!outputFilePath) return EMPTY
+
+      document.body.style.cursor = 'progress'
+
+      const writeResult = await effects.writeClipAudio(
+        clipSpec,
+        outputFilePath
+      )
+
+      if (writeResult.error) {
+        document.body.style.cursor = 'default'
+        return of(r.exportApkgFailure(`${writeResult.error.message}`))
       }
 
-      return makeApkg(apkgData, effects)
+      document.body.style.cursor = 'default'
+
+      return of(
+        r.exportApkgSuccess('Audio saved in ' + outputFilePath)
+      )
     }),
     switchMap((x) => x),
     catchError((err) => {

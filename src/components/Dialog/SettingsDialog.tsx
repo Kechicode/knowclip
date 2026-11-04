@@ -205,38 +205,6 @@ const SettingsDialog = ({ open }: DialogProps<SettingsDialogData>) => {
 
         <section className={css.settingsGroup}>
           <Paper className={css.settingsGroupBody}>
-            <h3 className={css.heading}>Software updates</h3>
-            <FormControl className={css.formControl} fullWidth margin="normal">
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={settings.checkForUpdatesAutomatically}
-                    onChange={(e) =>
-                      dispatchLocal(
-                        actions.setCheckForUpdatesAutomatically(
-                          e.target.checked
-                        )
-                      )
-                    }
-                    color="primary"
-                  />
-                }
-                label="Check for updates on automatically on startup"
-              />
-            </FormControl>
-          </Paper>
-
-          <section className={css.settingsGroupDescription}>
-            <p>
-              Check this box if you want to be notified when you're running
-              outdated software. Knowclip will check for updates over the
-              network each time you open the app.
-            </p>
-          </section>
-        </section>
-
-        <section className={css.settingsGroup}>
-          <Paper className={css.settingsGroupBody}>
             <h3 className={css.heading}>Pop-up dictionary</h3>
             <List>
               {!dictionaryFiles.length && (
