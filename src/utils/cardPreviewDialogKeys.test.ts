@@ -2,12 +2,6 @@ import { describe, it, expect } from 'vitest'
 import { getCardPreviewDialogKeyAction } from './cardPreviewDialogKeys'
 
 describe('getCardPreviewDialogKeyAction', () => {
-  it('closes the preview on Escape', () => {
-    expect(getCardPreviewDialogKeyAction({ key: 'Escape' })).toEqual({
-      type: 'CLOSE',
-    })
-  })
-
   it('switches to the front on ArrowLeft', () => {
     expect(getCardPreviewDialogKeyAction({ key: 'ArrowLeft' })).toEqual({
       type: 'SWITCH_SIDE',
@@ -40,10 +34,11 @@ describe('getCardPreviewDialogKeyAction', () => {
     expect(getCardPreviewDialogKeyAction({ key: 'ArrowUp' })).toBeNull()
   })
 
+  it("ignores Escape, which is handled by the dialog's onClose", () => {
+    expect(getCardPreviewDialogKeyAction({ key: 'Escape' })).toBeNull()
+  })
+
   it('ignores keys while a text field is focused', () => {
-    expect(
-      getCardPreviewDialogKeyAction({ key: 'Escape', isTextFieldFocused: true })
-    ).toBeNull()
     expect(
       getCardPreviewDialogKeyAction({
         key: 'ArrowRight',

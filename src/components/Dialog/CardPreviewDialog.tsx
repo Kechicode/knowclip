@@ -90,11 +90,12 @@ const CardPreviewDialog = ({
   // Keyboard shortcuts that work while the preview is open:
   // - Space plays (or pauses) the preview's audio.
   // - Left / Right switch between the front and the back of the card.
-  // - Escape closes the preview.
-  useEffect(() => {
-    if (!open) return
-
-    const handleKeyDown = (event: KeyboardEvent) => {
+  //
+  // Escape is handled by the Dialog's own `onClose` callback, because MUI
+  // stops the propagation of the Escape keypress before it reaches the
+  // window.
+  const handleKeyDown = useCallback(
+    (event: React.KeyboardEvent<HTMLDivElement>) => {
       const action = getCardPreviewDialogKeyAction({
         key: event.key,
         isTextFieldFocused: isTextFieldFocused(),
@@ -102,12 +103,6 @@ const CardPreviewDialog = ({
       if (!action) return
 
       switch (action.type) {
-        case 'CLOSE': {
-          event.preventDefault()
-          event.stopPropagation()
-          close()
-          break
-        }
         case 'SWITCH_SIDE': {
           event.preventDefault()
           event.stopPropagation()
@@ -129,11 +124,9 @@ const CardPreviewDialog = ({
           break
         }
       }
-    }
-
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [open, close])
+    },
+    []
+  )
 
   const imageUrl =
     flashcard?.image &&
@@ -155,7 +148,7 @@ const CardPreviewDialog = ({
 
   if (!flashcard || !clip) {
     return (
-      <Dialog open={open} className={css.container}>
+      <Dialog open={open} onClose={close} className={css.container}>
         <DialogContent>
           <p>Could not find this card.</p>
         </DialogContent>
@@ -177,7 +170,14 @@ const CardPreviewDialog = ({
   const showTags = side === 'BACK' && flashcard.tags.length > 0
 
   return (
-    <Dialog open={open} className={css.container} maxWidth="sm" fullWidth>
+    <Dialog
+      open={open}
+      onClose={close}
+      onKeyDown={handleKeyDown}
+      className={css.container}
+      maxWidth="sm"
+      fullWidth
+    >
       <Tabs
         value={side === 'FRONT' ? 0 : 1}
         onChange={(_e, value) => setSide(value === 0 ? 'FRONT' : 'BACK')}
