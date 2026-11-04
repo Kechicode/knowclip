@@ -38,6 +38,11 @@ const keydownEpic: AppEpic = (action$, state$, effects) =>
         (key === KEYS.space || key === KEYS.process) &&
         (event[playPauseForceKey] || !isTextFieldFocused())
       ) {
+        // While the card preview is open, the space bar plays the preview's
+        // audio instead of the media file. The dialog handles it itself.
+        const currentDialog = r.getCurrentDialog(state$.value)
+        if (currentDialog?.type === 'CardPreview') return EMPTY
+
         event.preventDefault()
         if (
           !(

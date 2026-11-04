@@ -99,6 +99,15 @@
   margin: 0;
 }
 
+.hint kbd {
+  font-family: inherit;
+  font-size: 0.9em;
+  background-color: #eeeeee;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 3px;
+  padding: 0 0.35em;
+}
+
 .clozeBlank {
   color: #999999;
   font-weight: bold;

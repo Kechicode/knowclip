@@ -63,6 +63,9 @@ to use it.
 | `Ctrl` / `Cmd` + `S` | Save the project |
 | `Ctrl` / `Cmd` + `Shift` + `S` | Save the project as a new file |
 
+While the card preview is open, `Space` plays (or pauses) the previewed card's
+audio instead of the media file.
+
 See the "Keyboard shortcuts" panel in the app for the same list, with the
 correct modifiers for your platform.
 

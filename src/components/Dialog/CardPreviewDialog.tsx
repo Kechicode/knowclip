@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   Dialog,
@@ -44,6 +44,7 @@ const CardPreviewDialog = ({
 
   const [side, setSide] = useState<'FRONT' | 'BACK'>('FRONT')
   const [previewClozeIndex, setPreviewClozeIndex] = useState(0)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
 
   const close = useCallback(() => {
     dispatch(r.closeDialog())
@@ -83,6 +84,41 @@ const CardPreviewDialog = ({
   const audioUrl = preview.audioFileId
     ? `${localServerAddress}/file/${preview.audioFileId}`
     : null
+
+  // The space bar plays (or pauses) the preview's audio, the same way it
+  // plays the media file outside of the dialog.
+  useEffect(() => {
+    if (!open) return
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== ' ' && event.key !== 'Spacebar') return
+      // Don't hijack the space bar when the user is typing.
+      const activeElement = document.activeElement
+      if (
+        activeElement &&
+        (activeElement instanceof HTMLInputElement ||
+          activeElement instanceof HTMLTextAreaElement)
+      )
+        return
+
+      const audio = audioRef.current
+      if (!audio) return
+
+      event.preventDefault()
+      event.stopPropagation()
+
+      if (audio.paused) {
+        // Restart from the beginning if the clip has already finished.
+        if (audio.ended) audio.currentTime = 0
+        void audio.play()
+      } else {
+        audio.pause()
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [open])
 
   const imageUrl =
     flashcard?.image &&
@@ -164,14 +200,20 @@ const CardPreviewDialog = ({
 
               <div className={css.audioRow}>
                 {audioUrl && (
-                  <audio src={audioUrl} controls preload="metadata" />
+                  <audio
+                    ref={audioRef}
+                    src={audioUrl}
+                    controls
+                    preload="metadata"
+                  />
                 )}
               </div>
 
               {side === 'FRONT' && (
                 <p className={css.hint}>
                   The front of the card shows the audio
-                  {hasImage ? ' and the image' : ''}.
+                  {hasImage ? ' and the image' : ''}. Press <kbd>Space</kbd> to
+                  play it.
                 </p>
               )}
 

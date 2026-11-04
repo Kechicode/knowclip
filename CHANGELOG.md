@@ -9,6 +9,9 @@ All notable changes to this project are documented in this file.
 - **Keyboard shortcut for the card preview**: The preview dialog can now be
   opened with the `P` key for the selected card. The shortcut is listed in the
   app's keyboard shortcuts panel, and shown in the preview button's tooltip.
+- **Play the preview audio with the space bar**: While the card preview is
+  open, pressing `Space` plays (or pauses) the previewed card's audio instead
+  of the media file.
 
 ## v0.15.0-beta
 
