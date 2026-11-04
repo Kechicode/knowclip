@@ -14,6 +14,8 @@ import {
 import r from '../../redux'
 import { DialogProps } from './DialogProps'
 import { getClozeSegments } from '../../utils/clozePreview'
+import { getCardPreviewDialogKeyAction } from '../../utils/cardPreviewDialogKeys'
+import { isTextFieldFocused } from '../../utils/isTextFieldFocused'
 import css from './CardPreviewDialog.module.css'
 
 const CardPreviewDialog = ({
@@ -85,40 +87,53 @@ const CardPreviewDialog = ({
     ? `${localServerAddress}/file/${preview.audioFileId}`
     : null
 
-  // The space bar plays (or pauses) the preview's audio, the same way it
-  // plays the media file outside of the dialog.
+  // Keyboard shortcuts that work while the preview is open:
+  // - Space plays (or pauses) the preview's audio.
+  // - Left / Right switch between the front and the back of the card.
+  // - Escape closes the preview.
   useEffect(() => {
     if (!open) return
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== ' ' && event.key !== 'Spacebar') return
-      // Don't hijack the space bar when the user is typing.
-      const activeElement = document.activeElement
-      if (
-        activeElement &&
-        (activeElement instanceof HTMLInputElement ||
-          activeElement instanceof HTMLTextAreaElement)
-      )
-        return
+      const action = getCardPreviewDialogKeyAction({
+        key: event.key,
+        isTextFieldFocused: isTextFieldFocused(),
+      })
+      if (!action) return
 
-      const audio = audioRef.current
-      if (!audio) return
-
-      event.preventDefault()
-      event.stopPropagation()
-
-      if (audio.paused) {
-        // Restart from the beginning if the clip has already finished.
-        if (audio.ended) audio.currentTime = 0
-        void audio.play()
-      } else {
-        audio.pause()
+      switch (action.type) {
+        case 'CLOSE': {
+          event.preventDefault()
+          event.stopPropagation()
+          close()
+          break
+        }
+        case 'SWITCH_SIDE': {
+          event.preventDefault()
+          event.stopPropagation()
+          setSide(action.side)
+          break
+        }
+        case 'TOGGLE_AUDIO': {
+          const audio = audioRef.current
+          if (!audio) break
+          event.preventDefault()
+          event.stopPropagation()
+          if (audio.paused) {
+            // Restart from the beginning if the clip has already finished.
+            if (audio.ended) audio.currentTime = 0
+            void audio.play()
+          } else {
+            audio.pause()
+          }
+          break
+        }
       }
     }
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [open])
+  }, [open, close])
 
   const imageUrl =
     flashcard?.image &&
@@ -216,7 +231,6 @@ const CardPreviewDialog = ({
                   play it.
                 </p>
               )}
-
               {side === 'BACK' && (
                 <>
                   <p className="transcription">
@@ -270,6 +284,10 @@ const CardPreviewDialog = ({
       </DialogContent>
 
       <DialogActions>
+        <span className={css.shortcutHints}>
+          <kbd>←</kbd> <kbd>→</kbd> switch sides · <kbd>Space</kbd> play ·{' '}
+          <kbd>Esc</kbd> close
+        </span>
         <Button onClick={close} color="primary">
           Close
         </Button>

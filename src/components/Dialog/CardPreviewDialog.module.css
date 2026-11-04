@@ -108,6 +108,20 @@
   padding: 0 0.35em;
 }
 
+.shortcutHints {
+  color: #999999;
+  font-size: 0.8em;
+  margin-right: auto;
+}
+
+.shortcutHints kbd {
+  font-family: inherit;
+  background-color: #eeeeee;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 3px;
+  padding: 0 0.35em;
+}
+
 .clozeBlank {
   color: #999999;
   font-weight: bold;

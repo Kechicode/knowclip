@@ -64,7 +64,8 @@ to use it.
 | `Ctrl` / `Cmd` + `Shift` + `S` | Save the project as a new file |
 
 While the card preview is open, `Space` plays (or pauses) the previewed card's
-audio instead of the media file.
+audio, `←` and `→` switch between the front and the back of the card, and
+`Esc` closes the preview.
 
 See the "Keyboard shortcuts" panel in the app for the same list, with the
 correct modifiers for your platform.

@@ -15,6 +15,7 @@ import {
   SubtitlesCardBase,
   SubtitlesCardBases,
 } from '../../selectors'
+import { getCurrentDialog } from '../../selectors/dialog'
 import { useSelector } from 'react-redux'
 import { useHandleWaveformDrag } from './useWaveformHandleDrag'
 import { useHandleWaveformClipDrag } from './useWaveformHandleClipDrag'
@@ -34,6 +35,7 @@ export function useWaveformEventHandlers({
   highlightedClipId: string | null
 }) {
   const cardsBases = useSelector(getSubtitlesCardBases)
+  const currentDialog = useSelector(getCurrentDialog)
 
   useEffect(() => {
     const handleKeydown = (event: KeyboardEvent) => {
@@ -41,6 +43,10 @@ export function useWaveformEventHandlers({
       // Shift + arrow is used to resize the selected clip, so it shouldn't
       // also change the selection.
       if (event.shiftKey) return
+
+      // While the card preview is open, the arrow keys switch between the
+      // front and the back of the card instead of changing the selection.
+      if (currentDialog?.type === 'CardPreview') return
 
       if (key === KEYS.arrowRight && (altKey || !isTextFieldFocused())) {
         return waveform.actions.selectNextItemAndSeek(
@@ -60,6 +66,7 @@ export function useWaveformEventHandlers({
     window.addEventListener('keydown', handleKeydown)
     return () => window.removeEventListener('keydown', handleKeydown)
   }, [
+    currentDialog,
     playerRef,
     waveform.actions.selectPreviousItemAndSeek,
     waveform.actions.selectNextItemAndSeek,

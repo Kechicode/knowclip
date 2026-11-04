@@ -2,6 +2,15 @@
 
 All notable changes to this project are documented in this file.
 
+## v0.15.2-beta
+
+### Features
+
+- **More keyboard shortcuts in the card preview**: While the card preview is
+  open, `←` and `→` switch between the front and the back of the card, and
+  `Esc` closes the preview. The available shortcuts are listed at the bottom
+  of the dialog.
+
 ## v0.15.1-beta
 
 ### Features

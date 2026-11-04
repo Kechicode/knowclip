@@ -122,6 +122,11 @@ const keydownEpic: AppEpic = (action$, state$, effects) =>
         (key === KEYS.arrowLeft || key === KEYS.arrowRight) &&
         !isTextFieldFocused()
       ) {
+        // While the card preview is open, the arrow keys are handled by the
+        // dialog itself.
+        const currentDialog = r.getCurrentDialog(state$.value)
+        if (currentDialog?.type === 'CardPreview') return EMPTY
+
         const highlightedClipId = r.getHighlightedClipId(state$.value)
         if (!highlightedClipId) return EMPTY
 

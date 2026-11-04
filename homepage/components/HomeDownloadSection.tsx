@@ -28,7 +28,7 @@ const getOs = ({ userAgent }: Navigator) => {
   return WINDOWS
 }
 
-const LATEST_VERSION = "0.15.1-beta"
+const LATEST_VERSION = "0.15.2-beta"
 
 // The GitHub repository that releases are published to. Point this at your
 // own fork if you're building your own distribution of Knowclip.
