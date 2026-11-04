@@ -2,6 +2,14 @@
 
 All notable changes to this project are documented in this file.
 
+## v0.15.1-beta
+
+### Features
+
+- **Keyboard shortcut for the card preview**: The preview dialog can now be
+  opened with the `P` key for the selected card. The shortcut is listed in the
+  app's keyboard shortcuts panel, and shown in the preview button's tooltip.
+
 ## v0.15.0-beta
 
 ### Features

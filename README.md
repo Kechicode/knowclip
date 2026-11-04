@@ -56,6 +56,7 @@ to use it.
 | `D` | Look up the word at the mouse cursor |
 | `Esc` | Stop editing / close dialogs |
 | `E` | Start editing the selected card's fields |
+| `P` | Preview the selected card |
 | `C` | Start making a cloze deletion |
 | `Ctrl` + `Shift` + `D` | Delete the selected card |
 | `Ctrl` + `M` | Merge the selected card with overlapping cards |

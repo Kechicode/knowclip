@@ -160,7 +160,11 @@ const FlashcardSectionDisplayCard = memo(
                 <Download />
               </IconButton>
             </Tooltip>
-            <Tooltip title="Preview how this card will look in Anki">
+            <Tooltip
+              title={`Preview how this card will look in Anki (${getKeyboardShortcut(
+                'Preview selected card'
+              )} key)`}
+            >
               <IconButton
                 className={css.editCardButton}
                 onClick={previewCard}

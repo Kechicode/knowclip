@@ -7,6 +7,7 @@ import { KEYS } from '../utils/keyboard'
 import { getMetaOrCtrlKey } from '../components/FlashcardSectionDisplayClozeField'
 import { isTextFieldFocused } from '../utils/isTextFieldFocused'
 import { adjustClipBoundary } from '../utils/clipBoundary'
+import { getCardPreviewShortcutTarget } from '../utils/cardPreviewShortcut'
 
 const keydownEpic: AppEpic = (action$, state$, effects) =>
   fromEvent<KeyboardEvent>(window, 'keydown').pipe(
@@ -92,6 +93,22 @@ const keydownEpic: AppEpic = (action$, state$, effects) =>
         if (!highlightedClipId) return EMPTY
         event.preventDefault()
         return of(r.mergeOverlappingClips(highlightedClipId))
+      }
+
+      // P opens the preview of the selected card.
+      const previewTarget = getCardPreviewShortcutTarget({
+        key,
+        ctrlKey,
+        isTextFieldFocused: isTextFieldFocused(),
+        isDialogOpen: Boolean(r.getCurrentDialog(state$.value)),
+        highlightedClipId: r.getHighlightedClipId(state$.value),
+        currentMediaFileId: r.getCurrentMediaFile(state$.value)?.id,
+      })
+      if (previewTarget) {
+        event.preventDefault()
+        return of(
+          r.cardPreviewDialog(previewTarget.mediaFileId, previewTarget.clipId)
+        )
       }
 
       // Shift + Left/Right resizes the selected clip.
