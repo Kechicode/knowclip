@@ -36,3 +36,11 @@ out
 yalc.lock
 
 *.log
+
+# typescript build info
+*.tsbuildinfo
+
+# homepage build output
+homepage/.next
+homepage/out
+homepage/out_functions
