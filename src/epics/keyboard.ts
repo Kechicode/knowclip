@@ -83,6 +83,16 @@ const keydownEpic: AppEpic = (action$, state$, effects) =>
         return highlightedClipId ? of(r.deleteCard(highlightedClipId)) : EMPTY
       }
 
+      if (
+        key.toLowerCase() === KEYS.mLowercase &&
+        (ctrlKey || !isTextFieldFocused())
+      ) {
+        const highlightedClipId = r.getHighlightedClipId(state$.value)
+        if (!highlightedClipId) return EMPTY
+        event.preventDefault()
+        return of(r.mergeOverlappingClips(highlightedClipId))
+      }
+
       return EMPTY
     })
   )

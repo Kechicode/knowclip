@@ -82,3 +82,26 @@ export const getClipIdsByMediaFileId = (
   state: AppState,
   mediaFileId: string
 ): Array<ClipId> => state.clips.idsByMediaFileId[mediaFileId]
+
+/**
+ * Find the clips that overlap the given clip.
+ *
+ * Since clips are now allowed to overlap, this is used to determine which
+ * clips would be merged together by the merge action.
+ */
+export const getOverlappingClipIds = (
+  state: AppState,
+  clipId: ClipId
+): Array<ClipId> => {
+  const clip = state.clips.byId[clipId]
+  if (!clip) return []
+
+  const clipIds = state.clips.idsByMediaFileId[clip.fileId] || []
+
+  return clipIds.filter((id) => {
+    if (id === clipId) return false
+    const other = state.clips.byId[id]
+    if (!other) return false
+    return other.start < clip.end && other.end > clip.start
+  })
+}

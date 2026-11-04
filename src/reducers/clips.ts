@@ -136,7 +136,10 @@ const clips: Reducer<ClipsState, Action> = (state = initialState, action) => {
     case A.moveClip: {
       const existingClip = state.byId[action.id]
       const { deltaX } = action
-      const movedState = {
+      // Moving a clip no longer merges it with the clips it overlaps. Overlapping
+      // clips are now allowed, and can be merged explicitly with the merge
+      // action.
+      return {
         ...state,
         byId: {
           ...state.byId,
@@ -147,9 +150,6 @@ const clips: Reducer<ClipsState, Action> = (state = initialState, action) => {
           },
         },
       }
-      return action.overlapIds
-        ? mergeClips(action.id, action.overlapIds, movedState.byId, movedState)
-        : movedState
     }
 
     case A.editClip: {
@@ -174,7 +174,10 @@ const clips: Reducer<ClipsState, Action> = (state = initialState, action) => {
     case A.stretchClip: {
       const stretchedClipId = action.stretchedClip.id
       const existingClip = state.byId[stretchedClipId]
-      const stretchedState = {
+      // Stretching a clip no longer merges it with the clips it overlaps.
+      // Overlapping clips are now allowed, and can be merged explicitly with
+      // the merge action.
+      return {
         ...state,
         byId: {
           ...state.byId,
@@ -185,15 +188,6 @@ const clips: Reducer<ClipsState, Action> = (state = initialState, action) => {
           },
         },
       }
-
-      return action.overlappedClips.length
-        ? mergeClips(
-            action.stretchedClip.id,
-            action.overlappedClips.map((c) => c.id),
-            stretchedState.byId,
-            stretchedState
-          )
-        : stretchedState
     }
 
     case A.deleteCard: {

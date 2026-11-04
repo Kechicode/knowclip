@@ -9,6 +9,8 @@ import editClip from './editClip'
 import exportCsvAndMp3 from './exportCsvAndMp3'
 import exportMarkdown from './exportMarkdown'
 import exportApkg from './exportApkg'
+import exportSingleCard from './exportSingleCard'
+import mergeOverlappingClips from './mergeClips'
 import addMediaToProject from './addMediaToProject'
 import deleteAllCurrentFileClips from './deleteAllCurrentFileClips'
 import keyboard from './keyboard'
@@ -96,6 +98,8 @@ const rootEpic: AppEpic = combineEpics(
   clipCreate,
   exportCsvAndMp3,
   exportApkg,
+  exportSingleCard,
+  mergeOverlappingClips,
   exportMarkdown,
   deleteAllCurrentFileClips,
   project,

@@ -76,7 +76,7 @@ const exportApkg: AppEpic = (action$, state$, effects) =>
     switchMap((x) => x)
   )
 
-function makeApkg(
+export function makeApkg(
   exportData: ApkgExportData,
   { showSaveDialog, writeApkgDeck, fromIpcRendererEvent }: EpicsDependencies
 ) {

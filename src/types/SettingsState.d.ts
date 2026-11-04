@@ -8,6 +8,11 @@ declare type SettingsState = {
   checkForUpdatesAutomatically: boolean
   warnBeforeConvertingMedia: boolean
   viewMode: ViewMode
+  /**
+   * Extra time (in milliseconds) appended to the end of every exported clip,
+   * so that the tail of the sound isn't cut off.
+   */
+  clipTailPaddingMs?: number
   activeDictionaries?: { id: FileId; type: DictionaryFileType }[]
 }
 

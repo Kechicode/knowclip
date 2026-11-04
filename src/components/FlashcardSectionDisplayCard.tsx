@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { IconButton, Tooltip } from '@mui/material'
 import r from '../redux'
 import css from './FlashcardSectionDisplay.module.css'
-import { Edit, Photo, Delete, Loop } from '@mui/icons-material'
+import { Edit, Photo, Delete, Loop, Download, Merge } from '@mui/icons-material'
 import FlashcardSectionDisplay from './FlashcardSectionDisplay'
 import { TransliterationFlashcardFields } from '../types/Project'
 import useClozeControls from '../utils/clozeField/useClozeControls'
@@ -26,15 +26,16 @@ const FlashcardSectionDisplayCard = memo(
     clipId: ClipId
     onDoubleClickField?: (fieldName: FlashcardFieldName) => void
   }) => {
-    const { fieldsToTracks, viewMode, isLoopOn } = useSelector(
-      (state: AppState) => ({
+    const { fieldsToTracks, viewMode, isLoopOn, hasOverlappingCards } =
+      useSelector((state: AppState) => ({
         allTags: r.getAllTags(state),
         currentNoteType: r.getCurrentNoteType(state),
         isLoopOn: r.getLoopState(state),
         fieldsToTracks: r.getSubtitlesFlashcardFieldLinks(state),
         viewMode: state.settings.viewMode,
-      })
-    )
+        hasOverlappingCards:
+          r.getOverlappingClipIds(state, flashcard.id).length > 0,
+      }))
 
     const { fields: f } = flashcard
     const fields = f as TransliterationFlashcardFields
@@ -64,6 +65,14 @@ const FlashcardSectionDisplayCard = memo(
 
     const deleteClipAndCard = useCallback(() => {
       dispatch(r.deleteCard(flashcard.id))
+    }, [dispatch, flashcard.id])
+
+    const exportSingleCard = useCallback(() => {
+      dispatch(r.exportSingleCardRequest(mediaFile.id, flashcard.id))
+    }, [dispatch, mediaFile.id, flashcard.id])
+
+    const mergeOverlappingCards = useCallback(() => {
+      dispatch(r.mergeOverlappingClips(flashcard.id))
     }, [dispatch, flashcard.id])
 
     const clozeControls = useClozeControls({
@@ -130,6 +139,15 @@ const FlashcardSectionDisplayCard = memo(
                 <Edit />
               </IconButton>
             </Tooltip>
+            <Tooltip title="Export this card as an Anki deck file">
+              <IconButton
+                className={css.editCardButton}
+                onClick={exportSingleCard}
+                id={$.exportButton}
+              >
+                <Download />
+              </IconButton>
+            </Tooltip>
           </>
         }
         secondaryMenuItems={
@@ -166,6 +184,19 @@ const FlashcardSectionDisplayCard = memo(
             <Tooltip title="Delete clip and flashcard">
               <IconButton onClick={deleteClipAndCard}>
                 <Delete />
+              </IconButton>
+            </Tooltip>
+            <Tooltip
+              title={`Merge with overlapping cards (${getKeyboardShortcut(
+                'Merge overlapping cards'
+              )} key)`}
+            >
+              <IconButton
+                onClick={mergeOverlappingCards}
+                id={$.mergeButton}
+                disabled={!hasOverlappingCards}
+              >
+                <Merge />
               </IconButton>
             </Tooltip>
           </>

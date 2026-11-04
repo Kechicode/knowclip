@@ -1,5 +1,6 @@
 import { Reducer } from 'redux'
 import A from '../types/ActionType'
+import { DEFAULT_CLIP_TAIL_PADDING_MS } from '../utils/clipTailPadding'
 
 export const initialState: SettingsState = {
   mediaFolderLocation: null,
@@ -7,6 +8,7 @@ export const initialState: SettingsState = {
   checkForUpdatesAutomatically: true,
   warnBeforeConvertingMedia: true,
   viewMode: 'VERTICAL',
+  clipTailPaddingMs: DEFAULT_CLIP_TAIL_PADDING_MS,
 }
 
 const settings: Reducer<SettingsState, Action> = (
@@ -76,6 +78,12 @@ const settings: Reducer<SettingsState, Action> = (
       return {
         ...state,
         warnBeforeConvertingMedia: action.warn,
+      }
+
+    case A.setClipTailPaddingMs:
+      return {
+        ...state,
+        clipTailPaddingMs: action.clipTailPaddingMs,
       }
 
     default:

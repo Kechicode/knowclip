@@ -53,14 +53,8 @@ export function useHandleWaveformClipDrag(
           msToSeconds(Math.min(offsetStart, ...overlaps.map((c) => c.start)))
         )
 
-        const toMerge = [
-          { id: clipToMoveId, start: offsetStart, end: offsetEnd },
-          ...overlaps,
-        ].sort((a, b) => a.start - b.start)
-
-        const newStartWithMerges = Math.min(...toMerge.map((c) => c.start))
-        const newEndWithMerges = Math.max(...toMerge.map((c) => c.end))
-
+        // The moved clip keeps its own boundaries. Overlapping clips are
+        // allowed; they can be merged explicitly with the merge action.
         const { regions: newRegions } = recalculateRegions(
           regions,
           getItemDangerously,
@@ -70,21 +64,17 @@ export function useHandleWaveformClipDrag(
               newItem: {
                 ...getItemDangerously(clipToMoveId),
                 id: clipToMoveId,
-                start: newStartWithMerges,
-                end: newEndWithMerges,
+                start: offsetStart,
+                end: offsetEnd,
               },
             },
-            ...overlapIds.map((id) => ({
-              itemId: id,
-              type: 'DELETE' as const,
-            })),
           ]
         )
 
         const newSelectionRegion = newRegions.findIndex(
           (r) =>
-            r.start >= newStartWithMerges &&
-            (r.end ?? secondsToMs(durationSeconds)) < newEndWithMerges
+            r.start >= offsetStart &&
+            (r.end ?? secondsToMs(durationSeconds)) < offsetEnd
         )
         waveform.dispatch({
           type: 'SET_REGIONS',

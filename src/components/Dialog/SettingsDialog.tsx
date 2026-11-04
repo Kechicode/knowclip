@@ -17,6 +17,7 @@ import {
   ListItemIcon,
   FormControlLabel,
   Checkbox,
+  TextField,
 } from '@mui/material'
 import { actions } from '../../actions'
 import * as selectors from '../../selectors'
@@ -132,6 +133,37 @@ const SettingsDialog = ({ open }: DialogProps<SettingsDialogData>) => {
               saved.
             </p>
             <p>(Does not apply to Anki deck .apkg exports.)</p>
+          </section>
+        </section>
+
+        <section className={css.settingsGroup}>
+          <Paper className={css.settingsGroupBody}>
+            <h3 className={css.heading}>Audio export</h3>
+            <FormControl className={css.formControl} margin="normal" fullWidth>
+              <TextField
+                type="number"
+                label="Extra time at the end of each clip (ms)"
+                value={settings.clipTailPaddingMs ?? ''}
+                onChange={(e) =>
+                  dispatchLocal(
+                    actions.setClipTailPaddingMs(Number(e.target.value) || 0)
+                  )
+                }
+                inputProps={{ min: 0, step: 50 }}
+              />
+            </FormControl>
+          </Paper>
+          <section className={css.settingsGroupDescription}>
+            <p>
+              Knowclip cuts audio clips exactly where you drew them, which can
+              cut off the tail of a sound. This amount of extra time (in
+              milliseconds) is added to the end of every exported clip.
+            </p>
+            <p>
+              For example, a value of 500 means that a clip running from 00:00:01
+              to 00:00:03 will actually export the audio from 00:00:01 to
+              00:00:03.5.
+            </p>
           </section>
         </section>
 

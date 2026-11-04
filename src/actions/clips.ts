@@ -89,6 +89,11 @@ export const clipsActions = {
     newSelection,
   }),
 
+  mergeOverlappingClips: (clipId: ClipId) => ({
+    type: A.mergeOverlappingClips,
+    clipId,
+  }),
+
   moveClip: (
     id: ClipId,
     deltaX: number,

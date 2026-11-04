@@ -63,7 +63,6 @@ const stretchClipEpic: AppEpic = (
       ({
         stretchedClip,
         unstretchedClip,
-        overlappedClips,
         newRegions,
         frontOverlappedSubtitlesCardBases,
         backOverlappedSubtitlesCardBases,
@@ -71,12 +70,8 @@ const stretchClipEpic: AppEpic = (
         dispatchClipwaveEvent(({ dispatch, state: { regions } }) => {
           const clipToStretchId = stretchedClip.id
 
-          const newStartWithMerges = Math.min(
-            ...[stretchedClip, ...overlappedClips].map((i) => i.start)
-          )
-          const newEndWithMerges = Math.max(
-            ...[stretchedClip, ...overlappedClips].map((i) => i.end)
-          )
+          const newStart = stretchedClip.start
+          const newEnd = stretchedClip.end
 
           if (regions !== newRegions)
             dispatch({
@@ -85,8 +80,8 @@ const stretchClipEpic: AppEpic = (
               newSelectionItemId: clipToStretchId,
               newSelectionRegion: newRegions.findIndex(
                 (region, i) =>
-                  region.start >= newStartWithMerges &&
-                  getRegionEnd(newRegions, i) < newEndWithMerges
+                  region.start >= newStart &&
+                  getRegionEnd(newRegions, i) < newEnd
               ),
             })
         })

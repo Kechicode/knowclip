@@ -8,6 +8,7 @@ import { sanitizeFileName } from '../utils/sanitizeFilename'
 import moment from 'moment'
 import { existsSync } from 'fs'
 import { getMidpoint } from '../files/videoStillImageFile'
+import { getClipTailPadding } from '../utils/clipTailPadding'
 
 const roughEscape = (text: string) => text.replace(/[\n\r]/g, '<br />')
 
@@ -107,6 +108,7 @@ export const getApkgExportData = async (
 ) => {
   const fieldNames = getNoteTypeFields(project.noteType)
   const mediaFiles = r.getProjectMediaFiles(state, project.id)
+  const tailPadding = getClipTailPadding(state)
 
   const missingMediaFiles = mediaFiles.filter((mediaFile) => {
     if (!mediaIdToClipsIds[mediaFile.id].length) return false
@@ -147,13 +149,24 @@ export const getApkgExportData = async (
       const filenameWithoutExtension = basename(fileLoaded.filePath, extension)
 
       const startTime = clip.start
-      const endTime = clip.end
+      // The clip's own end time, used to name the output file. Keeping this
+      // based on the clip itself (rather than the padded end time) means that
+      // changing the tail padding doesn't rename existing media files.
+      const clipEndTime = clip.end
+
+      // Extend the end of the audio so that the tail of the sound isn't cut
+      // off. Never extend past the end of the media file.
+      const mediaEndTime = media.durationSeconds
+        ? Math.round(media.durationSeconds * 1000)
+        : Infinity
+      const endTime = Math.min(clipEndTime + tailPadding, mediaEndTime)
+
       const outputFilename =
         sanitizeFileName(
           `${filenameWithoutExtension.slice(0, 20)}__${media.id}`
         ) +
         `__${toTimestamp(startTime, '!', '!')}_${toTimestamp(
-          endTime,
+          clipEndTime,
           '!',
           '!'
         )}.mp3`
@@ -161,7 +174,7 @@ export const getApkgExportData = async (
       const getSeconds = (seconds?: number) =>
         typeof seconds === 'number'
           ? seconds
-          : +(getMidpoint(startTime, endTime) / 1000).toFixed(3)
+          : +(getMidpoint(startTime, clipEndTime) / 1000).toFixed(3)
 
       clipSpecs.push({
         sourceFilePath: fileLoaded.filePath,

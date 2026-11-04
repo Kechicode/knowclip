@@ -74,21 +74,14 @@ export function useWaveformHandleClipEdgeDrag(
       const subtitlesFront = allOverlappedFront.map(getOverlapStats)
       const subtitlesBack = allOverlappedBack.map(getOverlapStats)
 
-      const overlapIds = clips.map((c) => c.id)
-
-      const newStartWithMerges = Math.min(
-        ...[stretchedClip, ...clips].map((i) => i.start)
-      )
-      const newEndWithMerges = Math.max(
-        ...[stretchedClip, ...clips].map((i) => i.end)
-      )
-
       const clipToStretchId = stretch.clipId
+      // The stretched clip keeps its own boundaries. Overlapping clips are
+      // allowed; they can be merged explicitly with the merge action.
       const newItem = {
         ...getItemDangerously(clipToStretchId),
         id: clipToStretchId,
-        start: newStartWithMerges,
-        end: newEndWithMerges,
+        start: stretchedClip.start,
+        end: stretchedClip.end,
       }
       const { regions: newRegions, newSelectionRegion } = recalculateRegions(
         regions,
@@ -98,9 +91,8 @@ export function useWaveformHandleClipEdgeDrag(
             type: 'UPDATE',
             newItem,
           },
-          ...overlapIds.map((id) => ({ type: 'DELETE' as const, itemId: id })),
         ],
-        newStartWithMerges
+        stretchedClip.start
       )
       const newSelection = {
         item: clipToStretchId,

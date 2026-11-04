@@ -42,4 +42,9 @@ export const settingsActions = {
     type: A.setWarnBeforeConvertingMedia,
     warn,
   }),
+
+  setClipTailPaddingMs: (clipTailPaddingMs: number) => ({
+    type: A.setClipTailPaddingMs,
+    clipTailPaddingMs,
+  }),
 } satisfies KnowclipActionCreatorsSubset

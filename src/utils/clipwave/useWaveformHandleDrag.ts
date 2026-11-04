@@ -12,19 +12,19 @@ import { Dispatch } from 'redux'
 export function useHandleWaveformDrag(
   playerRef: React.MutableRefObject<HTMLVideoElement | HTMLAudioElement | null>,
   dispatch: Dispatch<Action>,
-  waveform: WaveformInterface
+  _waveform: WaveformInterface
 ) {
-  const { getItemDangerously } = waveform
   return useCallback(
     ({ gesture }: WaveformGestureOf<WaveformDrag>) => {
-      const { start: startRaw, end: endRaw, overlaps } = gesture
+      const { start: startRaw, end: endRaw } = gesture
       const left = Math.min(startRaw, endRaw)
       const right = Math.max(startRaw, endRaw)
 
-      const tooSmallOrClipOverlapsExist =
-        right - left < CLIP_THRESHOLD_MILLSECONDS ||
-        overlaps.some((id) => getItemDangerously(id).clipwaveType === 'Primary')
-      if (tooSmallOrClipOverlapsExist) {
+      // Overlapping clips are allowed now, so that you can deliberately make
+      // two clips share a bit of audio. Clips can be merged explicitly with the
+      // merge action.
+      const tooSmall = right - left < CLIP_THRESHOLD_MILLSECONDS
+      if (tooSmall) {
         if (playerRef.current) {
           playerRef.current.currentTime = msToSeconds(endRaw)
         }
@@ -37,6 +37,6 @@ export function useHandleWaveformDrag(
         playerRef.current.currentTime = msToSeconds(left)
       }
     },
-    [dispatch, getItemDangerously, playerRef]
+    [dispatch, playerRef]
   )
 }

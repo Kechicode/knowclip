@@ -281,4 +281,59 @@ describe('clips reducer', () => {
       )
     )
   })
+
+  it('does not merge clips when moving a clip over another one', () => {
+    // "a" runs from 1 to 1.5, "b" from 2 to 2.5. Moving "b" by -1 puts it
+    // right on top of "a".
+    const state = clips(
+      {
+        byId: { a: a.clip, b: b.clip },
+        flashcards: { a: a.card, b: b.card },
+        idsByMediaFileId: { [fileId]: ['a', 'b'] },
+      },
+      { type: A.initializeApp }
+    )
+
+    const newState = clips(
+      state,
+      r.moveClip('b', -1, ['a'], [] as any)
+    )
+
+    // Both clips survive, and "b" has moved.
+    expect(Object.keys(newState.byId).sort()).toEqual(['a', 'b'])
+    expect(newState.byId.b.start).toBe(1)
+    expect(newState.byId.b.end).toBe(1.5)
+    expect(newState.byId.a.start).toBe(1)
+    expect(newState.byId.a.end).toBe(1.5)
+  })
+
+  it('does not merge clips when stretching a clip over another one', () => {
+    const state = clips(
+      {
+        byId: { a: a.clip, b: b.clip },
+        flashcards: { a: a.card, b: b.card },
+        idsByMediaFileId: { [fileId]: ['a', 'b'] },
+      },
+      { type: A.initializeApp }
+    )
+
+    const newState = clips(
+      state,
+      r.stretchClip(
+        { id: 'a', start: 1, end: 2.5 },
+        [b.clip],
+        { id: 'a', start: 1, end: 1.5 },
+        [],
+        [],
+        [] as any
+      )
+    )
+
+    // "b" is untouched, and "a" keeps its own (stretched) boundaries.
+    expect(Object.keys(newState.byId).sort()).toEqual(['a', 'b'])
+    expect(newState.byId.a.start).toBe(1)
+    expect(newState.byId.a.end).toBe(2.5)
+    expect(newState.byId.b.start).toBe(2)
+    expect(newState.byId.b.end).toBe(2.5)
+  })
 })

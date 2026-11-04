@@ -15,6 +15,7 @@ const getKeyboardShortcuts = (platform: Window['electronApi']['platform']) =>
     'Close dictionary popover': 'Esc',
     'Start editing fields': 'E',
     'Delete clip and card': 'Ctrl + Shift + D',
+    'Merge overlapping cards': 'Ctrl + M',
     'Stop editing fields': 'Esc',
     'Start making cloze deletion': 'C',
     'Stop making cloze deletion': 'Esc',
@@ -86,6 +87,7 @@ const KeyboardShortcuts = () => {
               <Shortcut action="Start making cloze deletion" />
               <Shortcut action="Stop making cloze deletion" />
               <Shortcut action="Delete clip and card" />
+              <Shortcut action="Merge overlapping cards" />
             </section>
 
             <section className={css.group}>
