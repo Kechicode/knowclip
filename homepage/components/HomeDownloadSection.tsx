@@ -14,6 +14,13 @@ import { PATREON_URL } from "../urls"
 const WINDOWS = "win"
 const MAC = "mac"
 const LINUX = "linux"
+
+/**
+ * The platforms that currently have a downloadable build. Add a platform here
+ * once a release artifact has been published for it.
+ */
+const AVAILABLE_PLATFORMS: string[] = [MAC]
+
 const getOs = ({ userAgent }: Navigator) => {
   if (userAgent.includes("Mac OS")) return MAC
   if (userAgent.includes("Linux")) return LINUX
@@ -37,7 +44,11 @@ const DownloadSection = () => {
   const [firstOs, setFirstOs] = useState<string>()
 
   useEffect(() => {
-    const firstOs = getOs(window.navigator)
+    const detectedOs = getOs(window.navigator)
+    // Fall back to a platform we actually have a build for.
+    const firstOs = AVAILABLE_PLATFORMS.includes(detectedOs)
+      ? detectedOs
+      : AVAILABLE_PLATFORMS[0]
     setOs(firstOs)
     setFirstOs(firstOs)
   }, [])
@@ -83,48 +94,50 @@ const DownloadSection = () => {
 
   return (
     <section className={css.download}>
-      <DownloadOsSection
-        current={os}
-        setOs={setOs}
-        os={WINDOWS}
-        defaultExt={"exe"}
-        osName="Windows"
-        buttonText="for Windows 8+"
-        downloadVersion={downloadVersion}
-        getDownloadUrl={getDownloadUrl}
-      >
-        {(showPostDownloadMessage) => (
-          <>
-            <ol>
-              <li>
-                <A
-                  href={os && getDownloadUrl(os, "exe")}
-                  className={css.link}
-                  onClick={showPostDownloadMessage}
-                  newWindow
-                >
-                  Download
-                </A>{" "}
-                the .exe file.
-              </li>
-              <li>Open the .exe file.</li>
-              <li>
-                Follow any prompts you may see to give Windows permission to run
-                the app.
-              </li>
-            </ol>
-            <p>
-              Note that the app is currently only available on 64-bit machines.
-              (You probably don't have to worry about this unless you have a
-              really old computer{" "}
-              <span role="img" aria-label="smile">
-                🙂️
-              </span>
-              )
-            </p>
-          </>
-        )}
-      </DownloadOsSection>
+      {AVAILABLE_PLATFORMS.includes(WINDOWS) && (
+        <DownloadOsSection
+          current={os}
+          setOs={setOs}
+          os={WINDOWS}
+          defaultExt={"exe"}
+          osName="Windows"
+          buttonText="for Windows 8+"
+          downloadVersion={downloadVersion}
+          getDownloadUrl={getDownloadUrl}
+        >
+          {(showPostDownloadMessage) => (
+            <>
+              <ol>
+                <li>
+                  <A
+                    href={os && getDownloadUrl(os, "exe")}
+                    className={css.link}
+                    onClick={showPostDownloadMessage}
+                    newWindow
+                  >
+                    Download
+                  </A>{" "}
+                  the .exe file.
+                </li>
+                <li>Open the .exe file.</li>
+                <li>
+                  Follow any prompts you may see to give Windows permission to
+                  run the app.
+                </li>
+              </ol>
+              <p>
+                Note that the app is currently only available on 64-bit
+                machines. (You probably don't have to worry about this unless
+                you have a really old computer{" "}
+                <span role="img" aria-label="smile">
+                  🙂️
+                </span>
+                )
+              </p>
+            </>
+          )}
+        </DownloadOsSection>
+      )}
       <DownloadOsSection
         current={os}
         setOs={setOs}
@@ -184,63 +197,65 @@ const DownloadSection = () => {
           </>
         )}
       </DownloadOsSection>
-      <DownloadOsSection
-        os={LINUX}
-        current={os}
-        setOs={setOs}
-        osName="Linux"
-        buttonText="Debian archive (amd64)"
-        defaultExt="deb"
-        downloadVersion={downloadVersion}
-        getDownloadUrl={getDownloadUrl}
-      >
-        {(showPostDownloadMessage) => (
-          <>
-            <h5 className={css.subheading}>
-              Debian-based distributions (Ubuntu, ElementaryOS, etc.)
-            </h5>
-            <ol>
-              <li>
+      {AVAILABLE_PLATFORMS.includes(LINUX) && (
+        <DownloadOsSection
+          os={LINUX}
+          current={os}
+          setOs={setOs}
+          osName="Linux"
+          buttonText="Debian archive (amd64)"
+          defaultExt="deb"
+          downloadVersion={downloadVersion}
+          getDownloadUrl={getDownloadUrl}
+        >
+          {(showPostDownloadMessage) => (
+            <>
+              <h5 className={css.subheading}>
+                Debian-based distributions (Ubuntu, ElementaryOS, etc.)
+              </h5>
+              <ol>
+                <li>
+                  <A
+                    href={os && getDownloadUrl(os, "deb")}
+                    className={css.link}
+                    onClick={showPostDownloadMessage}
+                    newWindow
+                  >
+                    Download
+                  </A>{" "}
+                  the .deb package.
+                </li>
+                <li>
+                  Install it in your preferred manner, or via
+                  <pre>
+                    cd /your/download/folder/ # replace this!
+                    {"\n"}sudo dpkg -i{" "}
+                    {getFileName(downloadVersion, "linux", "deb")}
+                  </pre>
+                </li>
+                <li>
+                  Open up knowclip as you would any program, or in the terminal
+                  via <pre>knowclip</pre>
+                </li>
+              </ol>
+              <h5 className={css.subheading}>AppImage</h5>
+              <p>
+                For other distributions, there's an{" "}
                 <A
-                  href={os && getDownloadUrl(os, "deb")}
+                  href={getDownloadUrl("linux", "AppImage")}
                   className={css.link}
                   onClick={showPostDownloadMessage}
                   newWindow
                 >
-                  Download
+                  AppImage
                 </A>{" "}
-                the .deb package.
-              </li>
-              <li>
-                Install it in your preferred manner, or via
-                <pre>
-                  cd /your/download/folder/ # replace this!
-                  {"\n"}sudo dpkg -i{" "}
-                  {getFileName(downloadVersion, "linux", "deb")}
-                </pre>
-              </li>
-              <li>
-                Open up knowclip as you would any program, or in the terminal
-                via <pre>knowclip</pre>
-              </li>
-            </ol>
-            <h5 className={css.subheading}>AppImage</h5>
-            <p>
-              For other distributions, there's an{" "}
-              <A
-                href={getDownloadUrl("linux", "AppImage")}
-                className={css.link}
-                onClick={showPostDownloadMessage}
-                newWindow
-              >
-                AppImage
-              </A>{" "}
-              available for download, though it hasn't been as thoroughly
-              tested.
-            </p>
-          </>
-        )}
-      </DownloadOsSection>
+                available for download, though it hasn't been as thoroughly
+                tested.
+              </p>
+            </>
+          )}
+        </DownloadOsSection>
+      )}
     </section>
   )
 }

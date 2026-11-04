@@ -28,6 +28,21 @@ Currently being built with [Electron](https://electronjs.org), [Vite](https://vi
 
 See the [changelog](./CHANGELOG.md) for the full list of changes.
 
+### Downloads
+
+Releases are published at [github.com/Kechicode/knowclip/releases](https://github.com/Kechicode/knowclip/releases).
+
+Currently only a **macOS** build is published. The app is not code-signed, so
+the first time you open it you need to hold `Ctrl` and click it, then choose
+"Open". If macOS still refuses to open it, run this in your terminal:
+
+```bash
+xattr -d com.apple.quarantine /Applications/Knowclip.app
+```
+
+Knowclip bundles its own copy of ffmpeg, so no additional software is needed
+to use it.
+
 ### Keyboard shortcuts
 
 | Shortcut | Action |
