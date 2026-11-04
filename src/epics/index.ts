@@ -26,6 +26,7 @@ import preloadVideoStills from './preloadVideoStills'
 import generateWaveformImages from './generateWaveformImages'
 import menu from './menu'
 import dictionaries from './dictionaries'
+import cardPreview from './cardPreview'
 import { adjustWaveformViaHistory } from './adjustWaveformViaHistory'
 
 const closeEpic: AppEpic = (
@@ -117,6 +118,7 @@ const rootEpic: AppEpic = combineEpics(
   menu,
   pauseAndChangeCursorOnBusy,
   dictionaries,
+  cardPreview,
   clipwave,
   adjustWaveformViaHistory
 )

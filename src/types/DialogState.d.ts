@@ -15,6 +15,7 @@ declare type DialogData =
   | LinkSubtitlesDialogData
   | DictionariesDialogData
   | MediaConversionConfirmationDialogData
+  | CardPreviewDialogData
 
 declare type ConfirmationDialogData = {
   type: 'Confirmation'
@@ -81,4 +82,13 @@ declare type MediaConversionConfirmationDialogData = {
   message: string
   action: Action
   onCancel: Action | null
+}
+
+/**
+ * Preview of a single card, showing how it will look in Anki.
+ */
+declare type CardPreviewDialogData = {
+  type: 'CardPreview'
+  mediaFileId: MediaFileId
+  clipId: ClipId
 }

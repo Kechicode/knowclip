@@ -24,4 +24,20 @@ export const sessionActions = {
     type: A.setViewMode,
     viewMode,
   }),
+
+  loadCardPreview: (mediaFileId: MediaFileId, clipId: ClipId) => ({
+    type: A.loadCardPreview,
+    mediaFileId,
+    clipId,
+  }),
+
+  cardPreviewLoaded: (audioFileId: string) => ({
+    type: A.cardPreviewLoaded,
+    audioFileId,
+  }),
+
+  cardPreviewFailed: (errorMessage: string) => ({
+    type: A.cardPreviewFailed,
+    errorMessage,
+  }),
 } satisfies KnowclipActionCreatorsSubset

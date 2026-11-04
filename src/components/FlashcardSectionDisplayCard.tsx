@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { IconButton, Tooltip } from '@mui/material'
 import r from '../redux'
 import css from './FlashcardSectionDisplay.module.css'
-import { Edit, Photo, Delete, Loop, Download, Merge } from '@mui/icons-material'
+import { Edit, Photo, Delete, Loop, Download, Merge, Visibility } from '@mui/icons-material'
 import FlashcardSectionDisplay from './FlashcardSectionDisplay'
 import { TransliterationFlashcardFields } from '../types/Project'
 import useClozeControls from '../utils/clozeField/useClozeControls'
@@ -69,6 +69,10 @@ const FlashcardSectionDisplayCard = memo(
 
     const exportSingleCard = useCallback(() => {
       dispatch(r.exportSingleCardRequest(mediaFile.id, flashcard.id))
+    }, [dispatch, mediaFile.id, flashcard.id])
+
+    const previewCard = useCallback(() => {
+      dispatch(r.cardPreviewDialog(mediaFile.id, flashcard.id))
     }, [dispatch, mediaFile.id, flashcard.id])
 
     const mergeOverlappingCards = useCallback(() => {
@@ -146,6 +150,15 @@ const FlashcardSectionDisplayCard = memo(
                 id={$.exportButton}
               >
                 <Download />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Preview how this card will look in Anki">
+              <IconButton
+                className={css.editCardButton}
+                onClick={previewCard}
+                id={$.previewButton}
+              >
+                <Visibility />
               </IconButton>
             </Tooltip>
           </>

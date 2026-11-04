@@ -13,6 +13,7 @@ import { getCurrentDialog } from '../../selectors'
 import LinkSubtitlesDialog from './LinkSubtitlesDialog'
 import Dictionaries from './DictionariesDialog'
 import MediaConversionConfirmationDialog from './MediaConversionConfirmationDialog'
+import CardPreviewDialog from './CardPreviewDialog'
 
 const DialogView = () => {
   const currentDialog = useSelector((state: AppState) =>
@@ -59,6 +60,14 @@ const DialogView = () => {
     case 'MediaConversionConfirmation':
       return (
         <MediaConversionConfirmationDialog open={true} data={currentDialog} />
+      )
+    case 'CardPreview':
+      return (
+        <CardPreviewDialog
+          open={true}
+          data={currentDialog}
+          key={currentDialog.clipId}
+        />
       )
     default:
       // @ts-expect-error - just to make sure we don't forget to handle new dialog types

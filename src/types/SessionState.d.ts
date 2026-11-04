@@ -14,6 +14,7 @@ declare type SessionState = {
   loopMedia: LoopState
   editingCards: boolean
   dictionaryPopoverIsOpen: boolean
+  cardPreview: CardPreviewState
 
   progress: ProgressInfo | null
 }

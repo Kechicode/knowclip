@@ -1,0 +1,110 @@
+.container {
+  --card-max-width: 30em;
+}
+
+.tabs {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.content {
+  min-height: 12em;
+}
+
+.loading,
+.error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+  padding: 2em 0;
+  text-align: center;
+}
+
+.cardContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1em;
+}
+
+/* Styles the previewed card the same way Anki would render it. */
+.card {
+  font-family: Helvetica, Arial;
+  font-size: 16px;
+  text-align: center;
+  color: black;
+  background-color: white;
+  line-height: 1.25;
+  max-width: var(--card-max-width);
+  width: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 4px;
+  padding: 1em;
+  box-sizing: border-box;
+}
+
+.card .transcription {
+  font-size: 2em;
+}
+
+.card .pronunciation {
+  font-style: italic;
+  font-size: 1.4em;
+}
+
+.card .meaning {
+  margin-top: 4em;
+  margin-bottom: 4em;
+}
+
+.card .notes {
+  background-color: #efefef;
+  padding: 0.8em;
+  border-radius: 0.2em;
+  text-align: justify;
+  max-width: 40em;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.card .tags {
+  color: #999999;
+  font-size: 0.8em;
+}
+
+.image {
+  margin-bottom: 1em;
+}
+
+.image img {
+  max-width: 100%;
+  border-radius: 4px;
+}
+
+.audioRow {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1em;
+}
+
+.audioRow audio {
+  width: 100%;
+  max-width: 24em;
+}
+
+.hint {
+  color: #999999;
+  font-size: 0.85em;
+  margin: 0;
+}
+
+.clozeBlank {
+  color: #999999;
+  font-weight: bold;
+}
+
+.clozeSelector {
+  display: flex;
+  gap: 0.25em;
+}

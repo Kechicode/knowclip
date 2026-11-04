@@ -119,6 +119,13 @@ const dependencies = {
         args: [clipSpecs, outputFilePath],
       })
   ),
+  createClipPreviewAudio: flatten(
+    (state: AppState, mediaFileId: MediaFileId, clipId: ClipId) =>
+      sendToMainProcess({
+        type: 'createClipPreviewAudio',
+        args: [state, mediaFileId, clipId],
+      })
+  ),
   processNoteMedia: flatten(
     (clipSpecs: ClipSpecs, destinationFolder: string, saveImages?: string) =>
       sendToMainProcess({

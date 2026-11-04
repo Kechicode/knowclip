@@ -19,6 +19,13 @@ const initialStateMinusMeta: Omit<
   progress: null,
   editingCards: false,
   dictionaryPopoverIsOpen: false,
+  cardPreview: {
+    clipId: null,
+    mediaFileId: null,
+    status: 'IDLE',
+    audioFileId: null,
+    errorMessage: null,
+  },
 }
 
 export default function getSessionReducer(meta: MinimalInitialSessionState) {
@@ -225,6 +232,53 @@ export default function getSessionReducer(meta: MinimalInitialSessionState) {
 
       case A.closeDictionaryPopover:
         return { ...state, dictionaryPopoverIsOpen: false }
+
+      case A.loadCardPreview:
+        return {
+          ...state,
+          cardPreview: {
+            clipId: action.clipId,
+            mediaFileId: action.mediaFileId,
+            status: 'LOADING',
+            audioFileId: null,
+            errorMessage: null,
+          },
+        }
+
+      case A.cardPreviewLoaded:
+        return {
+          ...state,
+          cardPreview: {
+            ...state.cardPreview,
+            status: 'READY',
+            audioFileId: action.audioFileId,
+            errorMessage: null,
+          },
+        }
+
+      case A.cardPreviewFailed:
+        return {
+          ...state,
+          cardPreview: {
+            ...state.cardPreview,
+            status: 'FAILED',
+            audioFileId: null,
+            errorMessage: action.errorMessage,
+          },
+        }
+
+      case A.closeDialog:
+        if (state.cardPreview.status !== 'IDLE')
+          return {
+            ...state,
+            cardPreview: {
+              ...state.cardPreview,
+              status: 'IDLE',
+              audioFileId: null,
+              errorMessage: null,
+            },
+          }
+        return state
 
       default:
         return state

@@ -118,6 +118,16 @@ const mediaConversionConfirmationDialog = (
     skipQueue
   )
 
+const cardPreviewDialog = (mediaFileId: MediaFileId, clipId: ClipId) =>
+  dialogActions.enqueueDialog(
+    {
+      type: 'CardPreview',
+      mediaFileId,
+      clipId,
+    },
+    true
+  )
+
 export const compositeDialogActions = {
   confirmationDialog,
   errorDialog,
@@ -131,4 +141,5 @@ export const compositeDialogActions = {
   linkSubtitlesDialog,
   dictionariesDialog,
   mediaConversionConfirmationDialog,
+  cardPreviewDialog,
 }

@@ -29,6 +29,11 @@ import { readdir } from 'fs-extra'
 import { parseProjectJson } from './node/parseProject'
 import { getWriteApkgDeck } from './node/writeToApkg'
 import { writeClipAudio } from './node/writeClipAudio'
+import {
+  createClipPreviewAudio,
+  createPreviewAudioDirectory,
+} from './node/clipPreviewAudio'
+import { failure } from './utils/result'
 
 export type MessageResponders = ReturnType<typeof getMessageResponders>
 
@@ -52,6 +57,42 @@ export const getMessageResponders = (
 
   registerFilePath: (fileId: string, path: string) => {
     filePathsRegistry[fileId] = path
+  },
+
+  /**
+   * Generates the audio of a single clip into a temporary file and registers
+   * it so that it can be served by the local file server. This is used for
+   * previewing a single card.
+   */
+  createClipPreviewAudio: async (
+    state: AppState,
+    mediaFileId: MediaFileId,
+    clipId: ClipId
+  ) => {
+    const exportResult = getSingleClipExportData(state, mediaFileId, clipId)
+    if (exportResult.type === 'MISSING MEDIA FILE') {
+      return failure(
+        new Error(
+          `Could not find the media file for this card${
+            exportResult.mediaFile ? ` (${exportResult.mediaFile.name})` : ''
+          }. Please locate it before previewing.`
+        )
+      )
+    }
+
+    const outputDirectory = createPreviewAudioDirectory()
+    const audioResult = await createClipPreviewAudio(
+      exportResult.clipSpec,
+      outputDirectory
+    )
+    if (audioResult.error) return failure(audioResult.error)
+
+    // Register the file so that the renderer can play it over the local
+    // file server.
+    const previewFileId = `clip-preview-${clipId}`
+    filePathsRegistry[previewFileId] = audioResult.value
+
+    return { value: { fileId: previewFileId } }
   },
 
   getPersistedTestState: async () => {
