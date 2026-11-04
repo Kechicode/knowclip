@@ -152,9 +152,11 @@ app.whenReady().then(async () => {
       })
       console.log('devtools installed')
     } catch (e) {
+      // Devtools extensions are a development-only convenience. If they can't be
+      // downloaded (e.g. no network access to the extension store), the app
+      // should still start.
       console.log('devtools failed to install')
       console.log(e)
-      throw e
     }
   }
 
