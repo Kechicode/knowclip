@@ -24,10 +24,7 @@ describe('getClozeSegments', () => {
   it('hides only the deletion being previewed', () => {
     const segments = getClozeSegments(
       'one two three',
-      [
-        { ranges: [{ start: 0, end: 3 }] },
-        { ranges: [{ start: 8, end: 13 }] },
-      ],
+      [{ ranges: [{ start: 0, end: 3 }] }, { ranges: [{ start: 8, end: 13 }] }],
       1
     )
 
@@ -67,7 +64,14 @@ describe('getClozeSegments', () => {
   it('handles multiple ranges in one deletion', () => {
     const segments = getClozeSegments(
       'a b c',
-      [{ ranges: [{ start: 0, end: 1 }, { start: 4, end: 5 }] }],
+      [
+        {
+          ranges: [
+            { start: 0, end: 1 },
+            { start: 4, end: 5 },
+          ],
+        },
+      ],
       0
     )
 

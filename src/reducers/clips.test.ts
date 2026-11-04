@@ -294,10 +294,7 @@ describe('clips reducer', () => {
       { type: A.initializeApp }
     )
 
-    const newState = clips(
-      state,
-      r.moveClip('b', -1, ['a'], [] as any)
-    )
+    const newState = clips(state, r.moveClip('b', -1, ['a'], [] as any))
 
     // Both clips survive, and "b" has moved.
     expect(Object.keys(newState.byId).sort()).toEqual(['a', 'b'])

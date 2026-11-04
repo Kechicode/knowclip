@@ -1,10 +1,4 @@
-import {
-  filter,
-  map,
-  ignoreElements,
-  mergeMap,
-  mergeAll,
-} from 'rxjs/operators'
+import { filter, map, ignoreElements, mergeMap, mergeAll } from 'rxjs/operators'
 import { combineEpics } from 'redux-observable'
 import { EMPTY, of } from 'rxjs'
 import r from '../redux'

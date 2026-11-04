@@ -4,7 +4,15 @@ import { useSelector, useDispatch } from 'react-redux'
 import { IconButton, Tooltip } from '@mui/material'
 import r from '../redux'
 import css from './FlashcardSectionDisplay.module.css'
-import { Edit, Photo, Delete, Loop, Download, Merge, Visibility } from '@mui/icons-material'
+import {
+  Edit,
+  Photo,
+  Delete,
+  Loop,
+  Download,
+  Merge,
+  Visibility,
+} from '@mui/icons-material'
 import FlashcardSectionDisplay from './FlashcardSectionDisplay'
 import { TransliterationFlashcardFields } from '../types/Project'
 import useClozeControls from '../utils/clozeField/useClozeControls'

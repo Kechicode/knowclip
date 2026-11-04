@@ -18,9 +18,9 @@ describe('clip tail padding', () => {
   })
 
   it('allows the padding to be turned off', () => {
-    expect(getClipTailPadding({ settings: { clipTailPaddingMs: 0 } } as any)).toBe(
-      0
-    )
+    expect(
+      getClipTailPadding({ settings: { clipTailPaddingMs: 0 } } as any)
+    ).toBe(0)
   })
 
   it('never returns a negative padding', () => {

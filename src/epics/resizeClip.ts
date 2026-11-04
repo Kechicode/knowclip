@@ -18,22 +18,23 @@ const resizeClip: AppEpic = (action$, state$, { dispatchClipwaveEvent }) =>
           const item = getItemDangerously(id)
           if (!item) return
 
-          const { regions: newRegions, newSelectionRegion } = recalculateRegions(
-            regions,
-            getItemDangerously,
-            [
-              {
-                type: 'UPDATE',
-                newItem: {
-                  ...item,
-                  id,
-                  start,
-                  end,
+          const { regions: newRegions, newSelectionRegion } =
+            recalculateRegions(
+              regions,
+              getItemDangerously,
+              [
+                {
+                  type: 'UPDATE',
+                  newItem: {
+                    ...item,
+                    id,
+                    start,
+                    end,
+                  },
                 },
-              },
-            ],
-            start
-          )
+              ],
+              start
+            )
 
           dispatch({
             type: 'SET_REGIONS',

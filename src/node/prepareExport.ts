@@ -136,10 +136,12 @@ export const getClipSpec = (
   const endTime = Math.min(clipEndTime + tailPadding, mediaEndTime)
 
   const outputFilename =
-    sanitizeFileName(
-      `${filenameWithoutExtension.slice(0, 20)}__${media.id}`
-    ) +
-    `__${toTimestamp(startTime, '!', '!')}_${toTimestamp(clipEndTime, '!', '!')}.mp3`
+    sanitizeFileName(`${filenameWithoutExtension.slice(0, 20)}__${media.id}`) +
+    `__${toTimestamp(startTime, '!', '!')}_${toTimestamp(
+      clipEndTime,
+      '!',
+      '!'
+    )}.mp3`
 
   const getSeconds = (seconds?: number) =>
     typeof seconds === 'number'

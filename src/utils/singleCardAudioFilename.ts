@@ -27,11 +27,14 @@ export const getSingleCardAudioBaseName = ({
   mediaName?: string | null
 }): string => {
   const fromTranscription = (transcription || '').trim()
-  if (fromTranscription) return fromTranscription.slice(0, MAX_FILENAME_BASE_LENGTH)
+  if (fromTranscription)
+    return fromTranscription.slice(0, MAX_FILENAME_BASE_LENGTH)
 
   const fromMediaName = (mediaName || '').trim()
   if (fromMediaName)
-    return fromMediaName.replace(/\.[^.]*$/, '').slice(0, MAX_FILENAME_BASE_LENGTH)
+    return fromMediaName
+      .replace(/\.[^.]*$/, '')
+      .slice(0, MAX_FILENAME_BASE_LENGTH)
 
   return 'clip'
 }

@@ -9,9 +9,9 @@ describe('adjustClipBoundary', () => {
   const clip = { start: 1000, end: 2000 }
 
   it('lengthens the clip when the end moves later', () => {
-    expect(
-      adjustClipBoundary({ clip, boundary: 'end', direction: 1 })
-    ).toEqual({ start: 1000, end: 2000 + CLIP_BOUNDARY_STEP_MS })
+    expect(adjustClipBoundary({ clip, boundary: 'end', direction: 1 })).toEqual(
+      { start: 1000, end: 2000 + CLIP_BOUNDARY_STEP_MS }
+    )
   })
 
   it('shortens the clip when the end moves earlier', () => {

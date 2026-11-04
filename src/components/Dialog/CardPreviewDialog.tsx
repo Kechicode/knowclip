@@ -22,19 +22,25 @@ const CardPreviewDialog = ({
 }: DialogProps<CardPreviewDialogData>) => {
   const dispatch = useDispatch()
 
-  const { flashcard, clip, mediaFile, localServerAddress, preview, videoStill } =
-    useSelector((state: AppState) => ({
-      flashcard: r.getFlashcard(state, clipId),
-      clip: r.getClip(state, clipId),
-      mediaFile: r.getFile<MediaFile>(state, 'MediaFile', mediaFileId),
-      localServerAddress: state.session.localServerAddress,
-      preview: state.session.cardPreview,
-      videoStill: r.getFileWithAvailability<VideoStillImageFile>(
-        state,
-        'VideoStillImage',
-        clipId
-      ),
-    }))
+  const {
+    flashcard,
+    clip,
+    mediaFile,
+    localServerAddress,
+    preview,
+    videoStill,
+  } = useSelector((state: AppState) => ({
+    flashcard: r.getFlashcard(state, clipId),
+    clip: r.getClip(state, clipId),
+    mediaFile: r.getFile<MediaFile>(state, 'MediaFile', mediaFileId),
+    localServerAddress: state.session.localServerAddress,
+    preview: state.session.cardPreview,
+    videoStill: r.getFileWithAvailability<VideoStillImageFile>(
+      state,
+      'VideoStillImage',
+      clipId
+    ),
+  }))
 
   const [side, setSide] = useState<'FRONT' | 'BACK'>('FRONT')
   const [previewClozeIndex, setPreviewClozeIndex] = useState(0)
@@ -114,7 +120,8 @@ const CardPreviewDialog = ({
   const hasImage = Boolean(imageUrl)
   const showPronunciation =
     side === 'BACK' && fields?.pronunciation && fields.pronunciation.trim()
-  const showMeaning = side === 'BACK' && fields?.meaning && fields.meaning.trim()
+  const showMeaning =
+    side === 'BACK' && fields?.meaning && fields.meaning.trim()
   const showNotes = side === 'BACK' && fields?.notes && fields.notes.trim()
   const showTags = side === 'BACK' && flashcard.tags.length > 0
 
@@ -163,35 +170,32 @@ const CardPreviewDialog = ({
 
               {side === 'FRONT' && (
                 <p className={css.hint}>
-                  The front of the card shows the audio{hasImage ? ' and the image' : ''}.
+                  The front of the card shows the audio
+                  {hasImage ? ' and the image' : ''}.
                 </p>
               )}
 
               {side === 'BACK' && (
                 <>
                   <p className="transcription">
-                    {clozeSegments ? (
-                      clozeSegments.map((segment, i) =>
-                        segment.isHidden ? (
-                          <span key={i} className={css.clozeBlank}>
-                            {'[...]'}
-                          </span>
-                        ) : (
-                          <span key={i}>{segment.text}</span>
+                    {clozeSegments
+                      ? clozeSegments.map((segment, i) =>
+                          segment.isHidden ? (
+                            <span key={i} className={css.clozeBlank}>
+                              {'[...]'}
+                            </span>
+                          ) : (
+                            <span key={i}>{segment.text}</span>
+                          )
                         )
-                      )
-                    ) : (
-                      fields?.transcription
-                    )}
+                      : fields?.transcription}
                   </p>
 
                   {showPronunciation && (
                     <p className="pronunciation">{fields?.pronunciation}</p>
                   )}
 
-                  {showMeaning && (
-                    <p className="meaning">{fields?.meaning}</p>
-                  )}
+                  {showMeaning && <p className="meaning">{fields?.meaning}</p>}
 
                   {showNotes && <p className="notes">{fields?.notes}</p>}
 

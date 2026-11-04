@@ -160,9 +160,9 @@ const SettingsDialog = ({ open }: DialogProps<SettingsDialogData>) => {
               milliseconds) is added to the end of every exported clip.
             </p>
             <p>
-              For example, a value of 500 means that a clip running from 00:00:01
-              to 00:00:03 will actually export the audio from 00:00:01 to
-              00:00:03.5.
+              For example, a value of 500 means that a clip running from
+              00:00:01 to 00:00:03 will actually export the audio from 00:00:01
+              to 00:00:03.5.
             </p>
           </section>
         </section>

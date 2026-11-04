@@ -41,11 +41,7 @@ const exportSingleCard: AppEpic = (action$, state$, effects) =>
 
       const clip = r.getClip(state$.value, clipId)
       const flashcard = r.getFlashcard(state$.value, clipId)
-      const media = r.getFile<MediaFile>(
-        state$.value,
-        'MediaFile',
-        mediaFileId
-      )
+      const media = r.getFile<MediaFile>(state$.value, 'MediaFile', mediaFileId)
 
       const defaultFileName = getSingleCardAudioFileName({
         transcription: flashcard?.fields.transcription,
@@ -63,10 +59,7 @@ const exportSingleCard: AppEpic = (action$, state$, effects) =>
 
       document.body.style.cursor = 'progress'
 
-      const writeResult = await effects.writeClipAudio(
-        clipSpec,
-        outputFilePath
-      )
+      const writeResult = await effects.writeClipAudio(clipSpec, outputFilePath)
 
       if (writeResult.error) {
         document.body.style.cursor = 'default'
@@ -75,9 +68,7 @@ const exportSingleCard: AppEpic = (action$, state$, effects) =>
 
       document.body.style.cursor = 'default'
 
-      return of(
-        r.exportApkgSuccess('Audio saved in ' + outputFilePath)
-      )
+      return of(r.exportApkgSuccess('Audio saved in ' + outputFilePath))
     }),
     switchMap((x) => x),
     catchError((err) => {

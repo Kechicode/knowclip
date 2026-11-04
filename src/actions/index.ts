@@ -68,10 +68,7 @@ const appActions = {
     errorMessage: errorMessage || null,
   }),
 
-  exportSingleCardRequest: (
-    mediaFileId: MediaFileId,
-    clipId: ClipId
-  ) => ({
+  exportSingleCardRequest: (mediaFileId: MediaFileId, clipId: ClipId) => ({
     type: KnowclipActionType.exportSingleCardRequest,
     mediaFileId,
     clipId,
