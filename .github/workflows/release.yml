@@ -1,0 +1,80 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to release (e.g. v0.15.3-beta)'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  release_macos:
+    runs-on: macos-13
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.tag || github.ref }}
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.17.0
+
+      - name: Cache npm dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-20.17.0-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-20.17.0-
+            ${{ runner.os }}-node-
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Sync the package version with the release tag
+        run: |
+          TAG="${{ github.event.inputs.tag || github.ref_name }}"
+          VERSION="${TAG#v}"
+          echo "Tag version: $VERSION"
+          CURRENT=$(node -p "require('./package.json').version")
+          echo "package.json version: $CURRENT"
+          if [ "$CURRENT" != "$VERSION" ]; then
+            echo "::warning::package.json version ($CURRENT) does not match the tag ($VERSION). Updating it."
+            npm version "$VERSION" --no-git-tag-version --allow-same-version
+          fi
+
+      - name: Build and package (macOS)
+        run: npm run dist -- --mac
+        env:
+          CI: true
+          RELEASE_BUILD: true
+          BUILD_NUMBER: ${{ github.run_number }}.${{ github.run_id }}.${{ github.run_attempt }}
+          VITE_BUILD_NUMBER: ${{ github.run_number }}.${{ github.run_id }}.${{ github.run_attempt }}
+
+      - name: List the built artifacts
+        run: ls -lh dist/Knowclip_*
+
+      - name: Publish the release
+        if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.inputs.tag || github.ref_name }}
+          name: ${{ github.event.inputs.tag || github.ref_name }}
+          draft: false
+          prerelease: ${{ contains(github.event.inputs.tag || github.ref_name, '-') }}
+          files: |
+            dist/Knowclip_*.dmg
+            dist/Knowclip_*.zip
+          generate_release_notes: true
+          fail_on_unmatched_files: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

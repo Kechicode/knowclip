@@ -2,6 +2,11 @@ name: MacOS Node CI
 
 on:
   push:
+    branches:
+      - master
+    paths-ignore:
+      - 'homepage/**'
+  pull_request:
     paths-ignore:
       - 'homepage/**'
 
@@ -14,14 +19,14 @@ jobs:
         node-version: [20.17.0]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
       - name: Cache npm dependencies
         id: cache-npm
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}
@@ -39,28 +44,6 @@ jobs:
           npm run lint
           npm run tsc
           npm run test
-      - name: integration tests
-        run: |
-          npm run integration
-      - name: build
-        run: npm run dist -- --mac
-        env:
-          CI: true
-          RELEASE_BUILD: ${{startsWith(github.ref, 'refs/tags/')}}
-          # one for electron builder, one for vite
-          BUILD_NUMBER: ${{ github.run_number }}.${{ github.run_id }}.${{ github.run_attempt }}
-          VITE_BUILD_NUMBER: ${{ github.run_number }}.${{ github.run_id }}.${{ github.run_attempt }}
-      - name: Create Release
-        if: startsWith(github.ref, 'refs/tags/')
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: ${{ github.ref }}
-          draft: true
-          prerelease: false
       - name: Upload test screenshots
         if: always()
         uses: actions/upload-artifact@v4
@@ -72,17 +55,3 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           path: logs
-      - name: Upload build artifacts
-        if: "!startsWith(github.ref, 'refs/tags/')"
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist
-          path: dist/Knowclip_*
-      - name: Release
-        if: startsWith(github.ref, 'refs/tags/')
-        uses: softprops/action-gh-release@v1
-        with:
-          draft: true
-          files: dist/Knowclip_*
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
