@@ -1,5 +1,5 @@
 # Knowclip
-![GitHub](https://img.shields.io/github/license/knowclip/knowclip) [![Linux Node CI](https://github.com/knowclip/knowclip/actions/workflows/linux.yml/badge.svg)](https://github.com/knowclip/knowclip/actions/workflows/linux.yml) [![MacOS Node CI](https://github.com/knowclip/knowclip/actions/workflows/macos.yml/badge.svg)](https://github.com/knowclip/knowclip/actions/workflows/macos.yml) [![Windows Node CI](https://github.com/knowclip/knowclip/actions/workflows/windows.yml/badge.svg)](https://github.com/knowclip/knowclip/actions/workflows/windows.yml) 
+![GitHub](https://img.shields.io/github/license/knowclip/knowclip) [![Linux Node CI](https://github.com/Kechicode/knowclip/actions/workflows/linux.yml/badge.svg)](https://github.com/Kechicode/knowclip/actions/workflows/linux.yml) [![MacOS Node CI](https://github.com/Kechicode/knowclip/actions/workflows/macos.yml/badge.svg)](https://github.com/Kechicode/knowclip/actions/workflows/macos.yml) [![Windows Node CI](https://github.com/Kechicode/knowclip/actions/workflows/windows.yml/badge.svg)](https://github.com/Kechicode/knowclip/actions/workflows/windows.yml) 
 
 A cross-platform desktop application for turning audio and video files into flashcards.
 
@@ -14,6 +14,41 @@ Currently being built with [Electron](https://electronjs.org), [Vite](https://vi
 ### Demo: [Making cards automatically with subtitled video](https://www.youtube.com/watch?v=mq_w2Qgikt8)
 [![Knowclip](img/screenshot_200324.png)](https://www.youtube.com/watch?v=mq_w2Qgikt8)
 
+### Features
+
+- Make clips manually or automatically, with silence detection and subtitles
+  integration.
+- Export your cards as an Anki deck (`.apkg`), or export a single card's audio
+  as an mp3 file.
+- Preview a single card before exporting it, to see exactly how it will look in
+  Anki: front and back, fields, image, cloze deletions and audio.
+- Resize cards with the keyboard, and merge overlapping cards when you want to.
+- Configure how much extra time is appended to the end of each exported clip,
+  so that sounds don't get cut off mid-decay.
+
+See the [changelog](./CHANGELOG.md) for the full list of changes.
+
+### Keyboard shortcuts
+
+| Shortcut | Action |
+| --- | --- |
+| `Shift` + `Space` (`Ctrl` + `Space` on Windows) | Play / pause |
+| `Ctrl` + `L` | Toggle looping of the selected card |
+| `←` / `→` | Select the previous / next card |
+| `Alt` + `←` / `→` | Select the previous / next card while editing |
+| `Shift` + `←` / `→` | Move the end of the selected card earlier / later |
+| `Shift` + `Alt` + `←` / `→` | Move the start of the selected card earlier / later |
+| `D` | Look up the word at the mouse cursor |
+| `Esc` | Stop editing / close dialogs |
+| `E` | Start editing the selected card's fields |
+| `C` | Start making a cloze deletion |
+| `Ctrl` + `Shift` + `D` | Delete the selected card |
+| `Ctrl` + `M` | Merge the selected card with overlapping cards |
+| `Ctrl` / `Cmd` + `S` | Save the project |
+| `Ctrl` / `Cmd` + `Shift` + `S` | Save the project as a new file |
+
+See the "Keyboard shortcuts" panel in the app for the same list, with the
+correct modifiers for your platform.
 
 ### Development
 

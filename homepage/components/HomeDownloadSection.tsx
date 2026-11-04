@@ -21,7 +21,11 @@ const getOs = ({ userAgent }: Navigator) => {
   return WINDOWS
 }
 
-const LATEST_VERSION = "0.14.3-beta"
+const LATEST_VERSION = "0.15.0-beta"
+
+// The GitHub repository that releases are published to. Point this at your
+// own fork if you're building your own distribution of Knowclip.
+const RELEASES_REPO = "Kechicode/knowclip"
 
 const getFileName = (versionWithoutV: string, osCode: string, ext: string) =>
   `Knowclip_${[versionWithoutV, osCode, osCode === "win" ? "x64" : null]
@@ -56,13 +60,13 @@ const DownloadSection = () => {
 
   const getDownloadUrl = useCallback(
     (osCode: string, ext: string) =>
-      `https://github.com/knowclip/knowclip/releases/download/v${
+      `https://github.com/${RELEASES_REPO}/releases/download/v${
         downloadVersion || LATEST_VERSION
       }/${getFileName(downloadVersion || LATEST_VERSION, osCode, ext)}`,
     [downloadVersion]
   )
   useEffect(() => {
-    fetch("https://api.github.com/repos/knowclip/knowclip/releases/latest", {
+    fetch(`https://api.github.com/repos/${RELEASES_REPO}/releases/latest`, {
       method: "GET",
       headers: {
         Accept: "application/vnd.github.v3+json",
