@@ -9,6 +9,7 @@ import { createWriteStream, existsSync } from 'fs'
 import * as tempy from 'tempy'
 import { BrowserWindow } from 'electron'
 import { APKG_CREATION_EVENTS } from '../utils/apkgCreationEvents'
+import { assignSequentialNewCardDue } from './assignSequentialNewCardDue'
 
 const tmpFilename = () => tempy.temporaryFile()
 
@@ -101,6 +102,9 @@ export function writeToApkg(
   }: { db: Database; tmpFilename: string; archive: archiver.Archiver }
 ) {
   ankiPackage.write(db)
+  // New cards store their queue position in `due`. mkanki writes 0 for every
+  // card, so Anki shows them all as "New #0". Number them in insertion order.
+  assignSequentialNewCardDue(db)
   db.close()
   const out = createWriteStream(filename)
   archive.pipe(out)
