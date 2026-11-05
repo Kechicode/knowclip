@@ -2,6 +2,14 @@
 
 All notable changes to this project are documented in this file.
 
+## v0.15.3-beta
+
+### Fixes
+
+- **Sequential new-card order in Anki exports**: Exported cards were all shown
+  as `New #0`. They are now numbered in clip order (`New #0`, `New #1`, and so
+  on), so Anki studies them in the order they were exported.
+
 ## v0.15.2-beta
 
 ### Features
