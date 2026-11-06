@@ -1,7 +1,7 @@
 {
   "name": "knowclip",
   "productName": "Knowclip",
-  "version": "0.15.3-beta",
+  "version": "0.15.4-beta",
   "private": true,
   "engines": {
     "node": "^20.17.0"
@@ -190,11 +190,15 @@
       "target": [
         {
           "target": "dmg",
-          "arch": ["universal"]
+          "arch": [
+            "universal"
+          ]
         },
         {
           "target": "zip",
-          "arch": ["universal"]
+          "arch": [
+            "universal"
+          ]
         }
       ],
       "identity": null,

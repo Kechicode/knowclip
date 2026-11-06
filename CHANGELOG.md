@@ -2,6 +2,36 @@
 
 All notable changes to this project are documented in this file.
 
+## v0.15.4-beta
+
+### Features
+
+- **Split a card at the playhead**: Press `K` while a card is selected and the
+  playhead sits inside it. A dialog shows the two resulting time ranges; the
+  first field starts with the original transcription and the second is empty.
+  Saving shortens the original card and creates the card on the right. The
+  audio file is cut from these times when you preview or export.
+- **Place the playhead by dragging it**: Drag the playhead on the waveform.
+  The time stays visible. `,` and `.` nudge it by 50 ms, and `Shift` makes
+  that 10 ms. When it is inside the selected card, the readout shows how long
+  each side would be.
+- **Hear both sides before splitting**: `[` plays from the card start to the
+  playhead, and `]` plays from the playhead to the card end. The playhead
+  returns to the cut when the side finishes.
+
+### Fixes
+
+- **Previous card skips the current card's start**: Pressing `←` while the
+  playhead is in the middle of a card selects the previous card.
+- **Preview uses the card's own range**: Preview plays from the card's start
+  to its end, so a split card does not include the next card. The extra time
+  configured in settings is added only when exporting.
+- **Preview refreshes after a card's times change**: The preview address
+  includes the card's range, so a shortened card does not keep playing the
+  audio from before the cut.
+- **Export errors show the real message**: A failure while writing the Anki
+  deck is reported as text instead of `Error: [object Event]`.
+
 ## v0.15.3-beta
 
 ### Fixes
