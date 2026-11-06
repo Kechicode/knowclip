@@ -48,12 +48,16 @@ const CardPreview = ({ noteType }: { noteType: NoteType | '' }) => {
         <section className={css.cardsPreview} id={$.cardsPreview}>
           <h3 className={css.cardPreviewHeading}>Flashcard Preview</h3>
           <p className={css.cardPreviewSummary}>
-            The front shows the sentence with blanks and the audio. The back
-            shows the complete sentence.
+            Listen, type what you hear, then flip the card and compare it with
+            the original sentence.
           </p>
           <Paper className={cn(css.cardPreview, 'card')}>
-            <p className="transcription">What's your [...]?</p>
             <div className={css.playButton} />
+            <input
+              className={css.typeAnswer}
+              readOnly
+              placeholder="Type what you hear"
+            />
             <hr />
             <p className="transcription">What's your name?</p>
           </Paper>

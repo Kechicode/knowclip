@@ -149,8 +149,7 @@ function registerClip(
       }
     : null
 
-  // A cloze project exports the fill-in-the-blank card on its own. A card
-  // that has no deletions yet still needs a sentence card, or Anki drops it.
+  // A cloze project exports the fill-in-the-blank card on its own.
   const exportSentenceCard = noteType !== 'Cloze' || !clozeNote
   if (exportSentenceCard)
     deck.addNote(noteModel.note(note.fields, note.guid, note.tags))

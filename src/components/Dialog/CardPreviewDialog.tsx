@@ -234,9 +234,10 @@ const CardPreviewDialog = ({
               </div>
 
               {isClozeCard && side === 'FRONT' && (
-                <p className="transcription">
-                  {showClozeBlanks
-                    ? clozeSegments?.map((segment, i) =>
+                <>
+                  {showClozeBlanks && (
+                    <p className="transcription">
+                      {clozeSegments?.map((segment, i) =>
                         segment.isHidden ? (
                           <span key={i} className={css.clozeBlank}>
                             {'[...]'}
@@ -244,15 +245,21 @@ const CardPreviewDialog = ({
                         ) : (
                           <span key={i}>{segment.text}</span>
                         )
-                      )
-                    : fields?.transcription}
-                </p>
+                      )}
+                    </p>
+                  )}
+                  <input
+                    className={css.typeAnswer}
+                    placeholder="Type what you hear"
+                    aria-label="Type what you hear"
+                  />
+                </>
               )}
 
               {side === 'FRONT' && (
                 <p className={css.hint}>
                   {isClozeCard
-                    ? 'The front shows the sentence with blanks and the audio.'
+                    ? 'Type what you hear. The back shows the original sentence.'
                     : `The front of the card shows the audio${
                         hasImage ? ' and the image' : ''
                       }.`}{' '}

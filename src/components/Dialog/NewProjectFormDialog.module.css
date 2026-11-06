@@ -25,6 +25,15 @@
   display: inline-block;
 }
 
+.typeAnswer {
+  display: block;
+  width: 80%;
+  margin: 1em auto 0;
+  padding: 0.4em;
+  font: inherit;
+  text-align: center;
+}
+
 .noteTypeFieldControl {
   width: 15rem;
 }

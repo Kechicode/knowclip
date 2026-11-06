@@ -41,8 +41,18 @@ const getSentenceCard = () => ({
   answerFormat: [FRONT_SIDE, HR, MEANING, NOTES, TAGS].join('\n\n'),
 })
 
-const CLOZE_FRONT = [IMAGE, SOUND, CLOZE_TRANSCRIPTION].join('\n\n')
-const CLOZE_BACK = [CLOZE_FRONT, MEANING, NOTES, TAGS].join('\n\n')
+const TYPE_CLOZE = '{{type:cloze:transcription}}'
+const CLOZE_FRONT = [IMAGE, SOUND, TYPE_CLOZE].join('\n\n')
+const CLOZE_BACK = [
+  IMAGE,
+  SOUND,
+  TYPE_CLOZE,
+  HR,
+  CLOZE_TRANSCRIPTION,
+  MEANING,
+  NOTES,
+  TAGS,
+].join('\n\n')
 
 const getListeningCard = (noteType: NoteType) => ({
   name: 'Listening',
@@ -110,7 +120,41 @@ export const TEMPLATE_CSS = `.card {
   color: #999999;
   font-size: .8em;
 }
+
+input#typeans {
+  width: 90%;
+  font-size: 20px !important;
+  font-family: Helvetica, Arial, sans-serif;
+  text-align: center;
+  padding: 0.4em;
+  margin-top: 0.6em;
+}
 `
+
+/**
+ * A Cloze card with no selected words still hides the whole sentence, so the
+ * answer is not sitting on the front. Selected words stay as they were marked.
+ */
+const clozeDeletionsForExport = (flashcard: Flashcard) => {
+  const deletions =
+    flashcard.cloze.length > 0
+      ? flashcard.cloze
+      : flashcard.type === 'Cloze' && flashcard.fields.transcription
+        ? [
+            {
+              ranges: [
+                { start: 0, end: flashcard.fields.transcription.length },
+              ],
+            },
+          ]
+        : []
+
+  return deletions.length
+    ? roughEscape(
+        encodeClozeDeletions(flashcard.fields.transcription, deletions)
+      )
+    : undefined
+}
 
 /**
  * Builds the export specs for a single clip.
@@ -189,14 +233,7 @@ export const getClipSpec = (
           }
         : null,
 
-      clozeDeletions: flashcard.cloze.length
-        ? roughEscape(
-            encodeClozeDeletions(
-              flashcard.fields.transcription,
-              flashcard.cloze
-            )
-          )
-        : undefined,
+      clozeDeletions: clozeDeletionsForExport(flashcard),
     },
   }
 }
