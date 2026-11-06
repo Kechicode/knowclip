@@ -52,8 +52,8 @@ const CardPreviewDialog = ({
     dispatch(r.closeDialog())
   }, [dispatch])
 
-  // Ask the main process to generate the preview audio. This is the same
-  // audio that would be exported, so the user hears exactly what they'll get.
+  // Ask the main process to generate the preview audio from the clip's
+  // own start and end. Export adds the configured tail separately.
   useEffect(() => {
     if (!open) return
     dispatch(r.loadCardPreview(mediaFileId, clipId))
@@ -132,7 +132,9 @@ const CardPreviewDialog = ({
     flashcard?.image &&
     mediaFile?.isVideo &&
     videoStill.availability.status === 'CURRENTLY_LOADED'
-      ? `${localServerAddress}/file/${videoStill.file?.id}`
+      ? `${localServerAddress}/file/${videoStill.file?.id}?v=${encodeURIComponent(
+          videoStill.availability.filePath
+        )}`
       : null
 
   const fields = flashcard?.fields as Record<string, string> | undefined

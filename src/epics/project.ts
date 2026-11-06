@@ -179,6 +179,7 @@ const PROJECT_EDIT_ACTIONS = new Set<Action['type']>([
   A.addClip,
   A.addClips,
   A.mergeClips,
+  A.splitClip,
   A.moveClip,
   A.addMediaToProjectRequest,
 ])

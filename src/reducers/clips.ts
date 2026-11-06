@@ -4,6 +4,7 @@ import { getNoteTypeFields } from '../utils/noteType'
 import { arrayToMapById } from '../utils/arrayToMapById'
 import { TransliterationFlashcardFields } from '../types/Project'
 import A from '../types/ActionType'
+import { ActionOf } from '../actions'
 
 const initialState: ClipsState = {
   byId: {},
@@ -190,6 +191,10 @@ const clips: Reducer<ClipsState, Action> = (state = initialState, action) => {
       return mergeClips(id1, ids, state.byId, state)
     }
 
+    case A.splitClip: {
+      return splitClip(state, action)
+    }
+
     case A.stretchClip: {
       const stretchedClipId = action.stretchedClip.id
       const existingClip = state.byId[stretchedClipId]
@@ -340,6 +345,81 @@ const clips: Reducer<ClipsState, Action> = (state = initialState, action) => {
     }
     default:
       return state
+  }
+}
+
+function splitClip(
+  state: ClipsState,
+  action: ActionOf<A.splitClip>
+): ClipsState {
+  const { clipId, newClipId, splitAt, leftTranscription, rightTranscription } =
+    action
+  const clip = state.byId[clipId]
+  const card = state.flashcards[clipId]
+  if (!clip || !card) return state
+
+  const shortened: Clip = {
+    ...clip,
+    end: splitAt,
+  }
+  const created: Clip = {
+    id: newClipId,
+    start: splitAt,
+    end: clip.end,
+    fileId: clip.fileId,
+    clipwaveType: 'Primary',
+  }
+  const keepCloze = leftTranscription === card.fields.transcription
+  const updatedCard = cardWithTranscription(
+    card,
+    leftTranscription,
+    keepCloze ? card.cloze : []
+  )
+  const createdCard = cardWithTranscription(
+    { ...card, id: newClipId, tags: [...card.tags], image: null },
+    rightTranscription,
+    []
+  )
+
+  return {
+    ...state,
+    byId: {
+      ...state.byId,
+      [clipId]: shortened,
+      [newClipId]: created,
+    },
+    idsByMediaFileId: {
+      ...state.idsByMediaFileId,
+      [clip.fileId]: addIdToIdsByMediaFileId(
+        state.byId,
+        state.idsByMediaFileId[clip.fileId] || [],
+        created
+      ),
+    },
+    flashcards: {
+      ...state.flashcards,
+      [clipId]: updatedCard,
+      [newClipId]: createdCard,
+    },
+  }
+}
+
+function cardWithTranscription(
+  card: Flashcard,
+  transcription: string,
+  cloze: ClozeDeletion[]
+): Flashcard {
+  if (card.type === 'Transliteration') {
+    return {
+      ...card,
+      fields: { ...card.fields, transcription },
+      cloze,
+    }
+  }
+  return {
+    ...card,
+    fields: { ...card.fields, transcription },
+    cloze,
   }
 }
 

@@ -98,6 +98,7 @@ const UNDOABLE_ACTIONS = new Set<KnowclipActionType>([
   A.addClip,
   A.addClips,
   A.mergeClips,
+  A.splitClip,
   A.moveClip,
   A.stretchClip,
   A.resizeClip,

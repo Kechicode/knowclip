@@ -4,4 +4,7 @@ export enum flashcardSectionDisplayCard$ {
   exportButton = 'flashcard-display-export-button',
   previewButton = 'flashcard-display-preview-button',
   mergeButton = 'flashcard-display-merge-button',
+  splitButton = 'flashcard-display-split-button',
+  playLeftButton = 'flashcard-display-play-left-button',
+  playRightButton = 'flashcard-display-play-right-button',
 }

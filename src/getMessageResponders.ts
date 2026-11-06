@@ -30,6 +30,7 @@ import { parseProjectJson } from './node/parseProject'
 import { getWriteApkgDeck } from './node/writeToApkg'
 import { writeClipAudio } from './node/writeClipAudio'
 import {
+  clipPreviewAudioFileId,
   createClipPreviewAudio,
   createPreviewAudioDirectory,
 } from './node/clipPreviewAudio'
@@ -69,7 +70,8 @@ export const getMessageResponders = (
     mediaFileId: MediaFileId,
     clipId: ClipId
   ) => {
-    const exportResult = getSingleClipExportData(state, mediaFileId, clipId)
+    // Preview is the clip itself. The extra tail is only added when exporting.
+    const exportResult = getSingleClipExportData(state, mediaFileId, clipId, 0)
     if (exportResult.type === 'MISSING MEDIA FILE') {
       return failure(
         new Error(
@@ -88,8 +90,13 @@ export const getMessageResponders = (
     if (audioResult.error) return failure(audioResult.error)
 
     // Register the file so that the renderer can play it over the local
-    // file server.
-    const previewFileId = `clip-preview-${clipId}`
+    // file server. The range is part of the id so a shortened card does not
+    // reuse the audio that was generated before the cut.
+    const previewFileId = clipPreviewAudioFileId(
+      clipId,
+      exportResult.clipSpec.startTime,
+      exportResult.clipSpec.endTime
+    )
     filePathsRegistry[previewFileId] = audioResult.value
 
     return { value: { fileId: previewFileId } }

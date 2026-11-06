@@ -30,8 +30,13 @@ import { useWaveformRenderSubtitlesChunk } from './WaveformSubtitlesChunk'
 import { waveform$ } from './waveformTestLabels'
 import { useWaveformRenderClip } from './WaveformClip'
 import { getFreshRegions } from '../epics/getFreshRegions'
-import { isWaveformItemSelectable } from '../utils/clipwave/isWaveformItemSelectable'
+import {
+  findPreviousSelectableItem,
+  isWaveformItemSelectable,
+} from '../utils/clipwave/isWaveformItemSelectable'
 import { useWaveformEventHandlers } from '../utils/clipwave/useWaveformEventHandlers'
+import { useDraggablePlayhead } from '../utils/clipwave/useDraggablePlayhead'
+import { PlayheadGuide } from './PlayheadGuide'
 
 import { main$ as $ } from './Main.testLabels'
 import { CLIPWAVE_ID } from '../utils/clipwave'
@@ -211,10 +216,22 @@ const Main = () => {
     }
   }, [dispatch, editing, previousSelection, selection])
 
-  const { selectPreviousItemAndSeek, selectNextItemAndSeek } = waveform.actions
+  const { selectNextItemAndSeek } = waveform.actions
   const selectPreviousCard = useCallback(() => {
-    selectPreviousItemAndSeek(playerRef.current, isWaveformItemSelectable)
-  }, [selectPreviousItemAndSeek])
+    const previous = findPreviousSelectableItem(
+      waveform.state.regions,
+      waveform.state.selection,
+      waveform.getItem
+    )
+    if (previous?.item) {
+      waveform.actions.selectItemAndSeekTo(
+        previous.regionIndex,
+        previous.item.id,
+        playerRef.current,
+        previous.item.start
+      )
+    }
+  }, [playerRef, waveform])
   const selectNextCard = useCallback(() => {
     selectNextItemAndSeek(playerRef.current, isWaveformItemSelectable)
   }, [selectNextItemAndSeek])
@@ -226,6 +243,13 @@ const Main = () => {
       waveform,
       highlightedClipId,
     })
+  const waveformReady = Boolean(currentMediaFile) && !mediaIsEffectivelyLoading
+  useDraggablePlayhead(
+    waveform,
+    playerRef,
+    waveformReady,
+    currentMediaFile?.id ?? null
+  )
 
   const renderPrimaryClip = useWaveformRenderClip()
   const renderSecondaryClip = useWaveformRenderSubtitlesChunk(waveform)
@@ -319,6 +343,14 @@ const Main = () => {
       )}
 
       <KeyboardShortcuts />
+      <PlayheadGuide
+        waveform={waveform}
+        playerRef={playerRef}
+        waveformReady={waveformReady}
+        waveformKey={currentMediaFile?.id ?? null}
+        highlightedClipId={highlightedClipId}
+        clipsById={clipsMap}
+      />
     </div>
   )
 }

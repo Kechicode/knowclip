@@ -7,9 +7,8 @@ import A from '../types/ActionType'
 /**
  * Generates the audio of the card being previewed.
  *
- * The audio is generated in the main process, so that the previewed audio is
- * exactly the audio that would end up in an exported deck (including the
- * configured tail padding).
+ * The audio is generated in the main process from the clip's own start and
+ * end. The export tail is not included.
  */
 const loadCardPreview: AppEpic = (action$, state$, effects) =>
   action$.pipe(

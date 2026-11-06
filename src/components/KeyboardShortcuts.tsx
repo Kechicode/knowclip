@@ -21,6 +21,13 @@ const getKeyboardShortcuts = (platform: Window['electronApi']['platform']) =>
     'Preview selected card': 'P',
     'Delete clip and card': 'Ctrl + Shift + D',
     'Merge overlapping cards': 'Ctrl + M',
+    'Split card at playhead': 'K',
+    'Nudge playhead earlier': ',',
+    'Nudge playhead later': '.',
+    'Nudge playhead earlier (fine)': 'Shift + ,',
+    'Nudge playhead later (fine)': 'Shift + .',
+    'Play left side of split': '[',
+    'Play right side of split': ']',
     'Stop editing fields': 'Esc',
     'Start making cloze deletion': 'C',
     'Stop making cloze deletion': 'Esc',
@@ -98,6 +105,13 @@ const KeyboardShortcuts = () => {
               <Shortcut action="Preview selected card" />
               <Shortcut action="Delete clip and card" />
               <Shortcut action="Merge overlapping cards" />
+              <Shortcut action="Split card at playhead" />
+              <Shortcut action="Nudge playhead earlier" />
+              <Shortcut action="Nudge playhead later" />
+              <Shortcut action="Nudge playhead earlier (fine)" />
+              <Shortcut action="Nudge playhead later (fine)" />
+              <Shortcut action="Play left side of split" />
+              <Shortcut action="Play right side of split" />
             </section>
 
             <section className={css.group}>

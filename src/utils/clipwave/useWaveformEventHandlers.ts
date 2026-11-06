@@ -20,7 +20,10 @@ import { useSelector } from 'react-redux'
 import { useHandleWaveformDrag } from './useWaveformHandleDrag'
 import { useHandleWaveformClipDrag } from './useWaveformHandleClipDrag'
 import { useWaveformHandleClipEdgeDrag } from './useWaveformHandleClipEdgeDrag'
-import { isWaveformItemSelectable } from './isWaveformItemSelectable'
+import {
+  findPreviousSelectableItem,
+  isWaveformItemSelectable,
+} from './isWaveformItemSelectable'
 export const STRETCH_START_DELAY = 100
 
 export function useWaveformEventHandlers({
@@ -56,10 +59,21 @@ export function useWaveformEventHandlers({
       }
 
       if (key === KEYS.arrowLeft && (altKey || !isTextFieldFocused())) {
-        return waveform.actions.selectPreviousItemAndSeek(
-          playerRef.current,
-          isWaveformItemSelectable
+        const { regions, selection } = waveform.state
+        const previous = findPreviousSelectableItem(
+          regions,
+          selection,
+          waveform.getItem
         )
+        if (previous?.item) {
+          waveform.actions.selectItemAndSeekTo(
+            previous.regionIndex,
+            previous.item.id,
+            playerRef.current,
+            previous.item.start
+          )
+        }
+        return
       }
     }
 

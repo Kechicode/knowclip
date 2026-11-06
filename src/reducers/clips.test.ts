@@ -358,4 +358,106 @@ describe('clips reducer', () => {
     const newState = clips(oldState, r.resizeClip('nope', 0, 1))
     expect(newState.byId).toEqual(oldState.byId)
   })
+
+  it('splits a clip at the given time and copies tags and other fields', () => {
+    const source = newClip({ start: 1000, end: 4000 }, fileId, 'a', {
+      transcription: 'hello world',
+      pronunciation: 'heh-loh',
+      meaning: 'a greeting',
+      notes: 'note',
+    })
+    source.card.tags = ['greeting']
+    source.card.image = { type: 'VideoStillImage', id: 'a' }
+    source.card.cloze = [{ ranges: [{ start: 0, end: 5 }] }]
+    source.clip.linkedSubtitlesChunk = 3
+
+    const state = clips(
+      {
+        byId: { a: source.clip },
+        flashcards: { a: source.card },
+        idsByMediaFileId: { [fileId]: ['a'] },
+      },
+      { type: A.initializeApp }
+    )
+
+    const newState = clips(
+      state,
+      r.splitClip({
+        clipId: 'a',
+        newClipId: 'a2',
+        splitAt: 2500,
+        leftTranscription: 'hello',
+        rightTranscription: 'world',
+      })
+    )
+
+    expect(newState.idsByMediaFileId[fileId]).toEqual(['a', 'a2'])
+    expect(newState.byId.a).toMatchObject({
+      start: 1000,
+      end: 2500,
+      linkedSubtitlesChunk: 3,
+    })
+    expect(newState.byId.a2).toEqual({
+      id: 'a2',
+      start: 2500,
+      end: 4000,
+      fileId,
+      clipwaveType: 'Primary',
+    })
+    expect(newState.flashcards.a.fields).toEqual({
+      transcription: 'hello',
+      pronunciation: 'heh-loh',
+      meaning: 'a greeting',
+      notes: 'note',
+    })
+    expect(newState.flashcards.a.cloze).toEqual([])
+    expect(newState.flashcards.a.image).toEqual({
+      type: 'VideoStillImage',
+      id: 'a',
+    })
+    expect(newState.flashcards.a2.fields).toEqual({
+      transcription: 'world',
+      pronunciation: 'heh-loh',
+      meaning: 'a greeting',
+      notes: 'note',
+    })
+    expect(newState.flashcards.a2.tags).toEqual(['greeting'])
+    expect(newState.flashcards.a2.tags).not.toBe(source.card.tags)
+    expect(newState.flashcards.a2.image).toBeNull()
+    expect(newState.flashcards.a2.cloze).toEqual([])
+  })
+
+  it('keeps cloze deletions when the first half of the transcription is unchanged', () => {
+    const source = newClip({ start: 1000, end: 4000 }, fileId, 'a', {
+      transcription: 'hello world',
+      pronunciation: '',
+      meaning: '',
+      notes: '',
+    })
+    const cloze = [{ ranges: [{ start: 0, end: 5 }] }]
+    source.card.cloze = cloze
+
+    const state = clips(
+      {
+        byId: { a: source.clip },
+        flashcards: { a: source.card },
+        idsByMediaFileId: { [fileId]: ['a'] },
+      },
+      { type: A.initializeApp }
+    )
+
+    const newState = clips(
+      state,
+      r.splitClip({
+        clipId: 'a',
+        newClipId: 'a2',
+        splitAt: 2000,
+        leftTranscription: 'hello world',
+        rightTranscription: '',
+      })
+    )
+
+    expect(newState.flashcards.a.cloze).toBe(cloze)
+    expect(newState.flashcards.a2.cloze).toEqual([])
+  })
 })

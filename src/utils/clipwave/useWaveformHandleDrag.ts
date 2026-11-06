@@ -8,6 +8,7 @@ import {
 } from 'clipwave'
 import { actions } from '../../actions'
 import { Dispatch } from 'redux'
+import { cancelSplitAudition } from '../splitPlayhead'
 
 export function useHandleWaveformDrag(
   playerRef: React.MutableRefObject<HTMLVideoElement | HTMLAudioElement | null>,
@@ -23,6 +24,8 @@ export function useHandleWaveformDrag(
       // Overlapping clips are allowed now, so that you can deliberately make
       // two clips share a bit of audio. Clips can be merged explicitly with the
       // merge action.
+      cancelSplitAudition()
+
       const tooSmall = right - left < CLIP_THRESHOLD_MILLSECONDS
       if (tooSmall) {
         if (playerRef.current) {

@@ -87,9 +87,15 @@ export function makeApkg(
 
       let processed = 0
       const deckCreationEnded = merge(
-        fromIpcRendererEvent(APKG_CREATION_EVENTS.deckCreationError).pipe(
-          map((message) => {
-            throw new Error(message ? String(message) : 'Deck creation failed.')
+        fromIpcRendererEvent<string>(
+          APKG_CREATION_EVENTS.deckCreationError
+        ).pipe(
+          map((event) => {
+            const detail =
+              typeof event.payload === 'string' && event.payload.trim()
+                ? event.payload
+                : 'Deck creation failed.'
+            throw new Error(detail)
           })
         ),
         fromIpcRendererEvent(APKG_CREATION_EVENTS.deckSaved)

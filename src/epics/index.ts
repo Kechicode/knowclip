@@ -11,6 +11,7 @@ import exportMarkdown from './exportMarkdown'
 import exportApkg from './exportApkg'
 import exportSingleCard from './exportSingleCard'
 import mergeOverlappingClips from './mergeClips'
+import splitClip from './splitClip'
 import resizeClip from './resizeClip'
 import addMediaToProject from './addMediaToProject'
 import deleteAllCurrentFileClips from './deleteAllCurrentFileClips'
@@ -102,6 +103,7 @@ const rootEpic: AppEpic = combineEpics(
   exportApkg,
   exportSingleCard,
   mergeOverlappingClips,
+  splitClip,
   resizeClip,
   exportMarkdown,
   deleteAllCurrentFileClips,

@@ -131,6 +131,12 @@ export default function getSessionReducer(meta: MinimalInitialSessionState) {
           waveformSelection: action.newSelection,
         }
 
+      case A.splitClip:
+        return {
+          ...state,
+          waveformSelection: action.newSelection,
+        }
+
       case A.setDefaultClipSpecs:
         return {
           ...state,

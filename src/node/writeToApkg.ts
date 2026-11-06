@@ -79,10 +79,11 @@ export const getWriteApkgDeck = (mainWindow: BrowserWindow) => {
         })
       })
     } catch (err) {
+      const detail = err instanceof Error ? err.message : String(err)
       mainWindow.webContents.send(
         'message',
         APKG_CREATION_EVENTS.deckCreationError,
-        String(err)
+        detail
       )
 
       throw err

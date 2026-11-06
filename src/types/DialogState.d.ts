@@ -16,6 +16,7 @@ declare type DialogData =
   | DictionariesDialogData
   | MediaConversionConfirmationDialogData
   | CardPreviewDialogData
+  | SplitClipDialogData
 
 declare type ConfirmationDialogData = {
   type: 'Confirmation'
@@ -91,4 +92,20 @@ declare type CardPreviewDialogData = {
   type: 'CardPreview'
   mediaFileId: MediaFileId
   clipId: ClipId
+}
+
+/**
+ * Asks the user how to divide a card's transcription before splitting it
+ * at the playhead.
+ */
+declare type SplitClipDialogData = {
+  type: 'SplitClip'
+  clipId: ClipId
+  /** Milliseconds. */
+  splitAt: number
+  /** Original clip start, in milliseconds. */
+  start: number
+  /** Original clip end, in milliseconds. */
+  end: number
+  originalTranscription: string
 }

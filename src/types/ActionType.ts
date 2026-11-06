@@ -34,6 +34,8 @@ const enum KnowclipActionType {
   editClips = 'EDIT_CLIPS',
   mergeClips = 'MERGE_CLIPS',
   mergeOverlappingClips = 'MERGE_OVERLAPPING_CLIPS',
+  splitClipRequest = 'SPLIT_CLIP_REQUEST',
+  splitClip = 'SPLIT_CLIP',
   moveClip = 'MOVE_CLIP',
   deleteCard = 'DELETE_CARD',
   deleteCards = 'DELETE_CARDS',

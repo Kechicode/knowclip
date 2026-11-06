@@ -100,6 +100,18 @@ const keydownEpic: AppEpic = (action$, state$, effects) =>
         return of(r.mergeOverlappingClips(highlightedClipId))
       }
 
+      if (
+        key.toLowerCase() === KEYS.kLowercase &&
+        (ctrlKey || !isTextFieldFocused())
+      ) {
+        const currentDialog = r.getCurrentDialog(state$.value)
+        if (currentDialog) return EMPTY
+        const highlightedClipId = r.getHighlightedClipId(state$.value)
+        if (!highlightedClipId) return EMPTY
+        event.preventDefault()
+        return of(r.splitClipRequest(highlightedClipId))
+      }
+
       // P opens the preview of the selected card.
       const previewTarget = getCardPreviewShortcutTarget({
         key,

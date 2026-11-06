@@ -157,7 +157,8 @@ const SettingsDialog = ({ open }: DialogProps<SettingsDialogData>) => {
             <p>
               Knowclip cuts audio clips exactly where you drew them, which can
               cut off the tail of a sound. This amount of extra time (in
-              milliseconds) is added to the end of every exported clip.
+              milliseconds) is added to the end of every exported clip. Preview
+              plays the clip exactly as drawn.
             </p>
             <p>
               For example, a value of 500 means that a clip running from

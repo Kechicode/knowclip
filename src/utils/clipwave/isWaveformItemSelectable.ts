@@ -1,11 +1,40 @@
 import {
+  getPreviousWaveformItem,
   PrimaryClip,
   SecondaryClip,
   WaveformItem,
   WaveformRegion,
+  WaveformState,
 } from 'clipwave'
 import { GetWaveformItem } from 'clipwave/dist/useWaveform'
 import { overlapsSignificantly } from '../../selectors'
+
+/**
+ * The item before the current selection, skipping the current card.
+ *
+ * A card can span several regions. The region where that card starts would
+ * otherwise count as the previous item and only rewind to its beginning.
+ */
+export function findPreviousSelectableItem(
+  regions: WaveformRegion[],
+  selection: WaveformState['selection'],
+  getItem: GetWaveformItem
+) {
+  return getPreviousWaveformItem(
+    regions,
+    selection,
+    getItem,
+    (item, region, regionIndex, allRegions, getRegionItem) =>
+      item.id !== selection.item &&
+      isWaveformItemSelectable(
+        item,
+        region,
+        regionIndex,
+        allRegions,
+        getRegionItem
+      )
+  )
+}
 
 export function isWaveformItemSelectable(
   item: WaveformItem,

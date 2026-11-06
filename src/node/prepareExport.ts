@@ -129,7 +129,8 @@ export const getClipSpec = (
   const clipEndTime = clip.end
 
   // Extend the end of the audio so that the tail of the sound isn't cut
-  // off. Never extend past the end of the media file.
+  // off. Never extend past the end of the media file. Preview passes 0 so
+  // it stays on the clip boundary; export passes the configured padding.
   const mediaEndTime = media.durationSeconds
     ? Math.round(media.durationSeconds * 1000)
     : Infinity
@@ -197,7 +198,8 @@ export const getClipSpec = (
 export const getSingleClipExportData = (
   state: AppState,
   mediaFileId: MediaFileId,
-  clipId: ClipId
+  clipId: ClipId,
+  tailPadding = getClipTailPadding(state)
 ):
   | { type: 'SUCCESS'; clipSpec: ClipSpecs }
   | { type: 'MISSING MEDIA FILE'; mediaFile: MediaFile | null } => {
@@ -213,7 +215,7 @@ export const getSingleClipExportData = (
     media,
     fileLoaded.filePath,
     clipId,
-    getClipTailPadding(state)
+    tailPadding
   )
 
   return { type: 'SUCCESS', clipSpec }

@@ -12,12 +12,15 @@ import {
   Download,
   Merge,
   Visibility,
+  CallSplit,
+  PlayArrow,
 } from '@mui/icons-material'
 import FlashcardSectionDisplay from './FlashcardSectionDisplay'
 import { TransliterationFlashcardFields } from '../types/Project'
 import useClozeControls from '../utils/clozeField/useClozeControls'
 import ClozeButtons from './FlashcardSectionDisplayClozeButtons'
 import { getKeyboardShortcut } from './KeyboardShortcuts'
+import { requestSplitAudition } from '../utils/splitPlayhead'
 
 import { flashcardSectionDisplayCard$ as $ } from './FlashcardSectionDisplayCard.testLabels'
 
@@ -86,6 +89,17 @@ const FlashcardSectionDisplayCard = memo(
     const mergeOverlappingCards = useCallback(() => {
       dispatch(r.mergeOverlappingClips(flashcard.id))
     }, [dispatch, flashcard.id])
+
+    const splitCard = useCallback(() => {
+      dispatch(r.splitClipRequest(flashcard.id))
+    }, [dispatch, flashcard.id])
+
+    const playSplitSide = useCallback(
+      (side: 'left' | 'right') => {
+        requestSplitAudition(flashcard.id, side)
+      },
+      [flashcard.id]
+    )
 
     const clozeControls = useClozeControls({
       deletions: flashcard.cloze,
@@ -209,6 +223,39 @@ const FlashcardSectionDisplayCard = memo(
             <Tooltip title="Delete clip and flashcard">
               <IconButton onClick={deleteClipAndCard}>
                 <Delete />
+              </IconButton>
+            </Tooltip>
+            <Tooltip
+              title={`Play the part before the playhead (${getKeyboardShortcut(
+                'Play left side of split'
+              )})`}
+            >
+              <IconButton
+                onClick={() => playSplitSide('left')}
+                id={$.playLeftButton}
+              >
+                <PlayArrow style={{ transform: 'scaleX(-1)' }} />
+              </IconButton>
+            </Tooltip>
+            <Tooltip
+              title={`Play the part after the playhead (${getKeyboardShortcut(
+                'Play right side of split'
+              )})`}
+            >
+              <IconButton
+                onClick={() => playSplitSide('right')}
+                id={$.playRightButton}
+              >
+                <PlayArrow />
+              </IconButton>
+            </Tooltip>
+            <Tooltip
+              title={`Split this card at the playhead (${getKeyboardShortcut(
+                'Split card at playhead'
+              )})`}
+            >
+              <IconButton onClick={splitCard} id={$.splitButton}>
+                <CallSplit />
               </IconButton>
             </Tooltip>
             <Tooltip

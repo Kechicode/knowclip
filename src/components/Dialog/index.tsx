@@ -14,6 +14,7 @@ import LinkSubtitlesDialog from './LinkSubtitlesDialog'
 import Dictionaries from './DictionariesDialog'
 import MediaConversionConfirmationDialog from './MediaConversionConfirmationDialog'
 import CardPreviewDialog from './CardPreviewDialog'
+import SplitClipDialog from './SplitClipDialog'
 
 const DialogView = () => {
   const currentDialog = useSelector((state: AppState) =>
@@ -67,6 +68,14 @@ const DialogView = () => {
           open={true}
           data={currentDialog}
           key={currentDialog.clipId}
+        />
+      )
+    case 'SplitClip':
+      return (
+        <SplitClipDialog
+          open={true}
+          data={currentDialog}
+          key={`${currentDialog.clipId}-${currentDialog.splitAt}`}
         />
       )
     default:

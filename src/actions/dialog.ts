@@ -128,6 +128,15 @@ const cardPreviewDialog = (mediaFileId: MediaFileId, clipId: ClipId) =>
     true
   )
 
+const splitClipDialog = (data: Omit<SplitClipDialogData, 'type'>) =>
+  dialogActions.enqueueDialog(
+    {
+      type: 'SplitClip',
+      ...data,
+    },
+    true
+  )
+
 export const compositeDialogActions = {
   confirmationDialog,
   errorDialog,
@@ -142,4 +151,5 @@ export const compositeDialogActions = {
   dictionariesDialog,
   mediaConversionConfirmationDialog,
   cardPreviewDialog,
+  splitClipDialog,
 }

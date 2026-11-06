@@ -106,6 +106,29 @@ export const clipsActions = {
     clipId,
   }),
 
+  /** Open the split dialog if the playhead is inside this clip. */
+  splitClipRequest: (clipId: ClipId) => ({
+    type: A.splitClipRequest,
+    clipId,
+  }),
+
+  /**
+   * Split a clip at `splitAt`. The original clip keeps the first half.
+   * Audio is not copied; later export and preview cut the source media
+   * using these start and end times.
+   */
+  splitClip: (split: {
+    clipId: ClipId
+    newClipId: ClipId
+    splitAt: number
+    leftTranscription: string
+    rightTranscription: string
+  }) => ({
+    type: A.splitClip,
+    ...split,
+    newSelection: { type: 'Clip' as const, id: split.newClipId },
+  }),
+
   moveClip: (
     id: ClipId,
     deltaX: number,
