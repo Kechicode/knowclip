@@ -2,6 +2,18 @@
 
 All notable changes to this project are documented in this file.
 
+## v0.15.5-beta
+
+### Features
+
+- **Cloze note type**: A new project can use the Cloze note type. Each clip
+  exports as one Anki card. The front shows the sentence with blanks, the
+  audio, and the image. The back shows the complete sentence, plus meaning and
+  notes when those fields have text. A card with no blanks yet still exports
+  one card, with the complete sentence and the audio on the front, so Anki
+  does not drop it. Simple and Transliteration projects still export a
+  listening card, and add a cloze card only when the card has deletions.
+
 ## v0.15.4-beta
 
 ### Features
