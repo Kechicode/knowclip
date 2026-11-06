@@ -40,9 +40,9 @@ const LinkSubtitlesDialog = ({
       subs: getSubtitlesFilesWithTracks(state),
       fieldsToTracks: getSubtitlesFlashcardFieldLinks(state),
       blankFields:
-        getCurrentNoteType(state) === 'Simple'
-          ? blankSimpleFields
-          : blankTransliterationFields,
+        getCurrentNoteType(state) === 'Transliteration'
+          ? blankTransliterationFields
+          : blankSimpleFields,
       mediaSubtitles: getSubtitlesFilesWithTracks(state),
     }))
 

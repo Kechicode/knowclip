@@ -17,7 +17,8 @@
         "noteType": {
           "enum": [
             "Simple",
-            "Transliteration"
+            "Transliteration",
+            "Cloze"
           ],
           "type": "string"
         },

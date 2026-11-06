@@ -33,6 +33,17 @@ const TAGS = `{{#Tags}}
 <div class="tags">{{Tags}}</div>
 {{/Tags}}`
 
+const SOUND = '{{sound}}'
+
+const getSentenceCard = () => ({
+  name: 'Sentence',
+  questionFormat: [IMAGE, SOUND, TRANSCRIPTION].join('\n'),
+  answerFormat: [FRONT_SIDE, HR, MEANING, NOTES, TAGS].join('\n\n'),
+})
+
+const CLOZE_FRONT = [IMAGE, SOUND, CLOZE_TRANSCRIPTION].join('\n\n')
+const CLOZE_BACK = [CLOZE_FRONT, MEANING, NOTES, TAGS].join('\n\n')
+
 const getListeningCard = (noteType: NoteType) => ({
   name: 'Listening',
   questionFormat: [IMAGE, `{{sound}}`].join('\n'),
@@ -59,7 +70,8 @@ export const getCloseAnswerFormat = (noteType: NoteType) =>
     TAGS,
   ].join('\n\n')
 
-const getCards = (noteType: NoteType) => [getListeningCard(noteType)]
+const getCards = (noteType: NoteType) =>
+  noteType === 'Cloze' ? [getSentenceCard()] : [getListeningCard(noteType)]
 
 export const TEMPLATE_CSS = `.card {
   font-family: Helvetica, Arial;
@@ -280,6 +292,7 @@ export const getApkgExportData = async (
     clips: clipSpecs,
     projectId,
     deckName,
+    noteType: project.noteType,
     noteModel: {
       name: `Audio note (${project.name})`,
       id: projectId + 1,
@@ -303,11 +316,18 @@ export const getApkgExportData = async (
       sortf,
       flds: fields,
       css: TEMPLATE_CSS,
-      tmpl: {
-        name: 'Cloze',
-        qfmt: CLOZE_QUESTION_FORMAT,
-        afmt: getCloseAnswerFormat(project.noteType),
-      },
+      tmpl:
+        project.noteType === 'Cloze'
+          ? {
+              name: 'Cloze',
+              qfmt: CLOZE_FRONT,
+              afmt: CLOZE_BACK,
+            }
+          : {
+              name: 'Cloze',
+              qfmt: CLOZE_QUESTION_FORMAT,
+              afmt: getCloseAnswerFormat(project.noteType),
+            },
     },
   }
   return { type: 'SUCCESS' as const, apkgData }

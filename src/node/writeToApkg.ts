@@ -41,7 +41,13 @@ export const getWriteApkgDeck = (mainWindow: BrowserWindow) => {
 
       await Promise.all(
         exportData.clips.map(async (clipSpecs: ClipSpecs) => {
-          registerClip(deck, noteModel, clozeNoteModel, clipSpecs)
+          registerClip(
+            deck,
+            noteModel,
+            clozeNoteModel,
+            clipSpecs,
+            exportData.noteType
+          )
           mainWindow.webContents.send(
             'message',
             APKG_CREATION_EVENTS.clipProcessed
@@ -127,7 +133,8 @@ function registerClip(
   deck: any,
   noteModel: any,
   clozeNoteModel: any,
-  clipSpecs: ClipSpecs
+  clipSpecs: ClipSpecs,
+  noteType: NoteType
 ) {
   const {
     flashcardSpecs: { fields, tags, id, clozeDeletions },
@@ -142,7 +149,11 @@ function registerClip(
       }
     : null
 
-  deck.addNote(noteModel.note(note.fields, note.guid, note.tags))
+  // A cloze project exports the fill-in-the-blank card on its own. A card
+  // that has no deletions yet still needs a sentence card, or Anki drops it.
+  const exportSentenceCard = noteType !== 'Cloze' || !clozeNote
+  if (exportSentenceCard)
+    deck.addNote(noteModel.note(note.fields, note.guid, note.tags))
   if (clozeNote)
     deck.addNote(
       clozeNoteModel.note(clozeNote.fields, clozeNote.guid, clozeNote.tags)

@@ -162,19 +162,21 @@ function getMediaCards<F extends FlashcardFields>(
 
     const { fields, cloze } = unescapeClozeFields(c.fields)
 
-    return project.noteType === 'Simple'
-      ? {
-          ...flashcardBase,
-          type: 'Simple',
-          fields: { ...blankSimpleFields, ...fields },
-          cloze,
-        }
-      : {
-          ...flashcardBase,
-          type: 'Transliteration',
-          fields: { ...blankTransliterationFields, ...fields },
-          cloze,
-        }
+    if (project.noteType === 'Transliteration') {
+      return {
+        ...flashcardBase,
+        type: 'Transliteration',
+        fields: { ...blankTransliterationFields, ...fields },
+        cloze,
+      }
+    }
+
+    return {
+      ...flashcardBase,
+      type: project.noteType,
+      fields: { ...blankSimpleFields, ...fields },
+      cloze,
+    }
   })
 }
 function toMediaSubtitlesRelation(s: SubtitlesJson): MediaSubtitlesRelation {

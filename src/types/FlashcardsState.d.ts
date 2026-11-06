@@ -17,7 +17,10 @@ declare type TransliterationFlashcardFieldName =
   | 'pronunciation'
 
 // change to note?
-declare type Flashcard = SimpleFlashcard | TransliterationFlashcard
+declare type Flashcard =
+  | SimpleFlashcard
+  | TransliterationFlashcard
+  | ClozeFlashcard
 declare type SimpleFlashcard = {
   id: ClipId
   type: 'Simple'
@@ -30,6 +33,14 @@ declare type TransliterationFlashcard = {
   id: ClipId
   type: 'Transliteration'
   fields: import('./Project').TransliterationFlashcardFields
+  tags: Array<string>
+  image?: FlashcardImage | null
+  cloze: ClozeDeletion[]
+}
+declare type ClozeFlashcard = {
+  id: ClipId
+  type: 'Cloze'
+  fields: import('./Project').SimpleFlashcardFields
   tags: Array<string>
   image?: FlashcardImage | null
   cloze: ClozeDeletion[]

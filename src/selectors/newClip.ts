@@ -1,5 +1,6 @@
 import newFlashcard from '../utils/newFlashcard'
 import { getDefaultTags, getDefaultIncludeStill } from './session'
+import { getCurrentNoteType } from './currentMedia'
 
 const ascending = (a: number, b: number) => a - b
 
@@ -42,7 +43,9 @@ export const getNewClipAndCard = <F extends FlashcardFields>(
             id,
             type: 'VideoStillImage',
           }
-        : null
+        : null,
+      [],
+      getCurrentNoteType(state)
     ),
   }
 }

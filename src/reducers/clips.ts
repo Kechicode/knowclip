@@ -462,7 +462,9 @@ function mergeClips(
         return all
       }, new Set<string>()),
     ],
-    cards[finalId].image
+    cards[finalId].image,
+    [],
+    cards[finalId].type
   )
   const fieldNames = getNoteTypeFields(flashcard.type)
 

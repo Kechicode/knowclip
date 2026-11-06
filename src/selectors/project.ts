@@ -247,7 +247,9 @@ export const encodeClozeDeletions = (text: string, cloze: ClozeDeletion[]) => {
 }
 
 const getFieldsTemplate = (file: ProjectFile) =>
-  file.noteType === 'Simple' ? blankSimpleFields : blankTransliterationFields
+  file.noteType === 'Transliteration'
+    ? blankTransliterationFields
+    : blankSimpleFields
 
 export const getProjectFileContents = (
   state: AppState,

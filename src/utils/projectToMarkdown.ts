@@ -45,15 +45,15 @@ const projectToMarkdown = (
                   clipTime.end
                 )}** ${flashcard.tags.map((tag) => `_#${tag}_`).join(' ')}`
               : '',
-            ...(flashcard.type === 'Simple'
+            ...(flashcard.type === 'Transliteration'
               ? [
                   `* ${flashcard.fields.transcription}`,
+                  `* ${flashcard.fields.pronunciation}`,
                   `* ${flashcard.fields.meaning}`,
                   `* ${flashcard.fields.notes}`,
                 ]
               : [
                   `* ${flashcard.fields.transcription}`,
-                  `* ${flashcard.fields.pronunciation}`,
                   `* ${flashcard.fields.meaning}`,
                   `* ${flashcard.fields.notes}`,
                 ]

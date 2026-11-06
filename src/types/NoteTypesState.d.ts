@@ -1,1 +1,1 @@
-declare type NoteType = 'Simple' | 'Transliteration'
+declare type NoteType = 'Simple' | 'Transliteration' | 'Cloze'

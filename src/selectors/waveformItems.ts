@@ -23,9 +23,9 @@ export const getSelectionItem = (
 }
 
 export const getBlankFields = (state: AppState) =>
-  getCurrentNoteType(state) === 'Simple'
-    ? blankSimpleFields
-    : blankTransliterationFields
+  getCurrentNoteType(state) === 'Transliteration'
+    ? blankTransliterationFields
+    : blankSimpleFields
 
 export const getNewFieldsFromLinkedSubtitles = (
   state: AppState,

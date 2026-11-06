@@ -45,6 +45,7 @@ declare type FlashcardSpecs = {
 declare type ApkgExportData = {
   deckName: string
   projectId: number
+  noteType: NoteType
 
   noteModel: ApkgExportNoteModel
   clozeNoteModel: ApkgExportClozeNoteModel

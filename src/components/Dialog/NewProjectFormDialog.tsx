@@ -43,6 +43,22 @@ const CardPreview = ({ noteType }: { noteType: NoteType | '' }) => {
           </Paper>
         </section>
       )
+    case 'Cloze':
+      return (
+        <section className={css.cardsPreview} id={$.cardsPreview}>
+          <h3 className={css.cardPreviewHeading}>Flashcard Preview</h3>
+          <p className={css.cardPreviewSummary}>
+            The front shows the sentence with blanks and the audio. The back
+            shows the complete sentence.
+          </p>
+          <Paper className={cn(css.cardPreview, 'card')}>
+            <p className="transcription">What's your [...]?</p>
+            <div className={css.playButton} />
+            <hr />
+            <p className="transcription">What's your name?</p>
+          </Paper>
+        </section>
+      )
     case 'Transliteration':
       return (
         <section className={css.cardsPreview} id={$.cardsPreview}>
@@ -220,6 +236,7 @@ const NewProjectFormDialog = ({
               >
                 Including pronunciation field
               </MenuItem>
+              <MenuItem value="Cloze">Cloze</MenuItem>
             </Select>
             <FormHelperText>{errors.noteType}</FormHelperText>
           </FormControl>

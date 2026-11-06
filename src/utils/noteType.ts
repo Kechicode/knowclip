@@ -12,4 +12,4 @@ const TRANSLITERATION_FIELDS: Array<TransliterationFlashcardFieldName> = [
 ]
 
 export const getNoteTypeFields = (noteType: NoteType) =>
-  noteType === 'Simple' ? SIMPLE_FIELDS : TRANSLITERATION_FIELDS
+  noteType === 'Transliteration' ? TRANSLITERATION_FIELDS : SIMPLE_FIELDS

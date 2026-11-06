@@ -5,7 +5,7 @@
 // if you forget to do this is that your project files
 // won't open during dev.
 
-type NoteType = 'Simple' | 'Transliteration' // TODO: remove this duplication
+type NoteType = 'Simple' | 'Transliteration' | 'Cloze' // TODO: remove this duplication
 type SubtitlesChunksMetadata =
   | {
       // TODO: remove this duplication

@@ -146,9 +146,10 @@ const makeClipsFromSubtitles: AppEpic = (
                         .join(' ')
                       return fields
                     },
-                    (currentNoteType === 'Simple'
+                    (currentNoteType === 'Transliteration'
                       ? {
                           transcription: '',
+                          pronunciation: '',
                           meaning: '',
                           notes: '',
                         }
@@ -156,7 +157,6 @@ const makeClipsFromSubtitles: AppEpic = (
                           transcription: '',
                           meaning: '',
                           notes: '',
-                          pronunciation: '',
                         }) as TransliterationFlashcardFields
                   )
                   const { clip, flashcard } = r.getNewClipAndCard(

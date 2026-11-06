@@ -132,9 +132,9 @@ const CardPreviewDialog = ({
     flashcard?.image &&
     mediaFile?.isVideo &&
     videoStill.availability.status === 'CURRENTLY_LOADED'
-      ? `${localServerAddress}/file/${videoStill.file?.id}?v=${encodeURIComponent(
-          videoStill.availability.filePath
-        )}`
+      ? `${localServerAddress}/file/${
+          videoStill.file?.id
+        }?v=${encodeURIComponent(videoStill.availability.filePath)}`
       : null
 
   const fields = flashcard?.fields as Record<string, string> | undefined
@@ -164,12 +164,19 @@ const CardPreviewDialog = ({
   }
 
   const hasImage = Boolean(imageUrl)
+  const isClozeCard = flashcard.type === 'Cloze'
   const showPronunciation =
     side === 'BACK' && fields?.pronunciation && fields.pronunciation.trim()
   const showMeaning =
     side === 'BACK' && fields?.meaning && fields.meaning.trim()
   const showNotes = side === 'BACK' && fields?.notes && fields.notes.trim()
   const showTags = side === 'BACK' && flashcard.tags.length > 0
+  const showClozeBlanks = isClozeCard
+    ? side === 'FRONT' && Boolean(clozeSegments)
+    : side === 'BACK' && Boolean(clozeSegments)
+  const showClozePicker =
+    flashcard.cloze.length > 0 &&
+    (isClozeCard ? side === 'FRONT' : side === 'BACK')
 
   return (
     <Dialog
@@ -226,17 +233,36 @@ const CardPreviewDialog = ({
                 )}
               </div>
 
+              {isClozeCard && side === 'FRONT' && (
+                <p className="transcription">
+                  {showClozeBlanks
+                    ? clozeSegments?.map((segment, i) =>
+                        segment.isHidden ? (
+                          <span key={i} className={css.clozeBlank}>
+                            {'[...]'}
+                          </span>
+                        ) : (
+                          <span key={i}>{segment.text}</span>
+                        )
+                      )
+                    : fields?.transcription}
+                </p>
+              )}
+
               {side === 'FRONT' && (
                 <p className={css.hint}>
-                  The front of the card shows the audio
-                  {hasImage ? ' and the image' : ''}. Press <kbd>Space</kbd> to
-                  play it.
+                  {isClozeCard
+                    ? 'The front shows the sentence with blanks and the audio.'
+                    : `The front of the card shows the audio${
+                        hasImage ? ' and the image' : ''
+                      }.`}{' '}
+                  Press <kbd>Space</kbd> to play it.
                 </p>
               )}
               {side === 'BACK' && (
                 <>
                   <p className="transcription">
-                    {clozeSegments
+                    {!isClozeCard && clozeSegments
                       ? clozeSegments.map((segment, i) =>
                           segment.isHidden ? (
                             <span key={i} className={css.clozeBlank}>
@@ -264,7 +290,7 @@ const CardPreviewDialog = ({
               )}
             </div>
 
-            {flashcard.cloze.length > 0 && side === 'BACK' && (
+            {showClozePicker && (
               <div className={css.clozeSelector}>
                 {flashcard.cloze.map((_deletion, index) => (
                   <Tooltip key={index} title={`Cloze ${index + 1}`}>
